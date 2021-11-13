@@ -2,7 +2,7 @@
 """
 Created on Sat Aug 18 01:00:17 2018
 
-@author: linzino
+@author: bookerhsu
 """
 
 import requests, re, feedparser, random, time
