@@ -179,8 +179,6 @@ def get_current_weather(keyword, userid):
     
     if keyword[-2:] == u'天氣':
         keyword = keyword[:-2]
-        
-    print(keyword)
     
     if keyword[-1] == u'縣' or keyword[-1] == u'市':
         city = [keyword]
@@ -224,7 +222,7 @@ def get_current_weather(keyword, userid):
         line_bot_api.push_message(userid, TextSendMessage(text=errMsg))
         return
 
-
+    print(url)
     print(resp.text)
     
     tww = json.loads(resp.text)
