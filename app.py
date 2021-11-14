@@ -98,40 +98,43 @@ mm_headers = {
        'content-type': 'application/x-www-form-urlencoded',
        'accept': 'text/html,application/xhtml+xml,application/xml;q=0.9,image/webp,image/apng,*/*;q=0.8,application/signed-exchange;v=b3;q=0.9',
        'cookie':''
-       }
+    }
 
 CWB_AUTHED_KEY = 'CWB-52F7E175-5DC9-4E41-9D16-6ED798D0C27E'
 
 TAIWAN_CITY = {'宜蘭縣':'F-D0047-001',
-'桃園市':'F-D0047-005',
-'新竹縣':'F-D0047-009',
-'苗栗縣':'F-D0047-013',
-'彰化縣':'F-D0047-017',
-'南投縣':'F-D0047-021',
-'雲林縣':'F-D0047-025',
-'嘉義縣':'F-D0047-029',
-'屏東縣':'F-D0047-033',
-'臺東縣':'F-D0047-037',
-'花蓮縣':'F-D0047-041',
-'澎湖縣':'F-D0047-045',
-'基隆市':'F-D0047-049',
-'新竹市':'F-D0047-053',
-'嘉義市':'F-D0047-057',
-'臺北市':'F-D0047-061',
-'高雄市':'F-D0047-065',
-'新北市':'F-D0047-069',
-'臺中市':'F-D0047-073',
-'臺南市':'F-D0047-077',
-'連江縣':'F-D0047-081',
-'金門縣':'F-D0047-085'}
+    '桃園市':'F-D0047-005',
+    '新竹縣':'F-D0047-009',
+    '苗栗縣':'F-D0047-013',
+    '彰化縣':'F-D0047-017',
+    '南投縣':'F-D0047-021',
+    '雲林縣':'F-D0047-025',
+    '嘉義縣':'F-D0047-029',
+    '屏東縣':'F-D0047-033',
+    '臺東縣':'F-D0047-037',
+    '花蓮縣':'F-D0047-041',
+    '澎湖縣':'F-D0047-045',
+    '基隆市':'F-D0047-049',
+    '新竹市':'F-D0047-053',
+    '嘉義市':'F-D0047-057',
+    '臺北市':'F-D0047-061',
+    '高雄市':'F-D0047-065',
+    '新北市':'F-D0047-069',
+    '臺中市':'F-D0047-073',
+    '臺南市':'F-D0047-077',
+    '連江縣':'F-D0047-081',
+    '金門縣':'F-D0047-085'}
 
 executor = ThreadPoolExecutor(3)
 
 requests.packages.urllib3.disable_warnings()
 
-headers = {'Authorization': CWB_AUTHED_KEY, 'User-Agent': 'Mozilla/5.0 (Macintosh; Intel Mac OS X 10_10_1) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/39.0.2171.95 Safari/537.36'}
+headers = {
+        'Authorization': CWB_AUTHED_KEY, 
+        'User-Agent': 'Mozilla/5.0 (Macintosh; Intel Mac OS X 10_10_1) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/39.0.2171.95 Safari/537.36'
+    }
 
-def get_news_push(userid):
+def get_news(userid):
     """
     建立一個抓最新消息的function
     """
@@ -139,8 +142,6 @@ def get_news_push(userid):
     rss_url = 'http://feeds.feedburner.com/cnaFirstNews'
     # 抓取資料
     rss = feedparser.parse(rss_url)
-#    
-#    tmp = title + ' ' +link
     tmp = []
     for i, entry in enumerate(rss.entries[:5], start=0):
         tmp.append(entry['title'] + ' ' + entry['link'])
@@ -165,9 +166,10 @@ def get_current_weather(keyword, userid):
     '''https://opendata.cwb.gov.tw/api/v1/rest/datastore/F-C0032-001?Authorization=CWB-52F7E175-5DC9-4E41-9D16-6ED798D0C27E
         &locationName=%E5%AE%9C%E8%98%AD%E7%B8%A3,%E8%8A%B1%E8%93%AE%E7%B8%A3&sort=time&timeFrom=2021-11-14T06%3A00%3A00&timeTo=2021-11-14T08%3A00%3A00
     '''
+    print('uid: '+userid)
+    print('keyword:'+keyword) 
     
-    #message = TextSendMessage(text='很抱歉，無法提供您{}的天氣。'.format(city))
-    errMsg = u'目前的{}無資料'.format(keyword)
+    errMsg = u'目前的 {} 無任何資料。'.format(keyword)
     apiNm = 'F-C0032-001'
     now = datetime.datetime.now()
     timeFrom = '2021-11-14T06:00:00'
@@ -225,8 +227,8 @@ def get_current_weather(keyword, userid):
         line_bot_api.push_message(userid, TextSendMessage(text=errMsg))
         return
 
-    print(url)
-    print(resp.text)
+#    print(url)
+#    print(resp.text)
     
     tww = json.loads(resp.text)
     
@@ -264,7 +266,7 @@ def get_current_weather(keyword, userid):
 
     line_bot_api.push_message(userid, TextSendMessage(text='\n'.join(msg)))
 
-def getmomo_search_push(keyword,userid):
+def get_momo_search(keyword,userid):
     print('uid: '+userid)
     print('keyword:'+keyword)           
     target_url = 'https://m.momoshop.com.tw/search.momo?searchKeyword={}&couponSeq=&searchType=1&cateLevel=-1&ent=k&_imgSH=fourCardStyle'.format(keyword)
@@ -460,22 +462,45 @@ def handle_text_message(event):
     uid = profile.user_id
     text = event.message.text
 
-    print('uid: '+uid)
-    print('name:'+nameid)
-    print(text)
-
-#    if text.isnumeric() and len(text) == 1:
-#         message = StickerSendMessage(
-#                package_id=11539,
-#                sticker_id=51626498
-#            )
+    print('uid: {}'.format(uid))
+    print('name:{}'.format(nameid))
+    print('keyword:{}'.format(text))
 
     # 買東西
     if text == '試試' or text.lower() == 'help':
-        response_message = '\n1.help\n2.找東西\n3.top30\n4.[台北市|雙北|東部|離島|..]天氣\n5.news\n'
-        message = TextSendMessage(text='貓喵:{}'.format(response_message))
+#        response_message = '\n1.help\n2.找東西\n3.top30\n4.[台北市|雙北|東部|離島|..]天氣\n5.news\n'
+#        message = TextSendMessage(text='貓喵:{}'.format(response_message))
+
+        ###### 選單介面
+        message = TemplateSendMessage(
+                    alt_text='貓喵寶寶',
+                    template=ButtonsTemplate(
+                        thumbnail_image_url='https://image.cache.storm.mg/styles/smg-800xauto-er/s3/media/image/2020/06/23/20200623-072521_U7111_M620467_21f2.jpg?itok=KocIzJI0',
+                        title='選單',
+                        text='  ',
+                        actions=[
+                            MessageTemplateAction(
+                                label='最新新聞',
+                                text='news'
+                            ),
+                            MessageTemplateAction(
+                                label='雙北天氣',
+                                text='雙北天氣'
+                            ),
+                            MessageTemplateAction(
+                                label='離島天氣',
+                                text='離島天氣'
+                            ),
+                            MessageTemplateAction(
+                                label='銷售排行',
+                                text='top30'
+                            )
+                        ]
+                    )
+                )
+
     elif text == '新聞' or text.lower() == 'news':
-        executor.submit(get_news_push,uid)
+        executor.submit(get_news,uid)
 
         message = StickerSendMessage(
                 package_id=11539,
@@ -508,10 +533,9 @@ def handle_text_message(event):
             sticker_id=sticker_id
         )
 
-    elif text[0] == '找':
-        text = text[1:]
-        print('keyword={}'.format(text))
-        executor.submit(getmomo_search_push,text,uid)
+    elif text[0] == u'找':
+
+        executor.submit(get_momo_search,text[1:],uid)
 
         message = StickerSendMessage(
                 package_id=11537,
@@ -519,7 +543,6 @@ def handle_text_message(event):
             )
           
     elif text.lower() == 'top30':
-        print('keyword={}'.format(text.lower()))
         category = category_set[random.randint(0, len(category_set)-1)]
         if len(text.split(' ')) > 1:
             category = text.split(' ')[1];
@@ -532,124 +555,27 @@ def handle_text_message(event):
             )
 
     elif u'天氣' in text:
-        print('keyword={}'.format(text))
-        #re_weather = re.compile(r"(\w+)天氣")
-        #city = re.match(re_weather,text)
         executor.submit(get_current_weather,text,uid)
 
         message = StickerSendMessage(
                 package_id=11539,
                 sticker_id=52114113
             )     
-    elif text.isnumeric():
-        print('stock_id={}'.format(text))
-        executor.submit(get_stock_info,text,uid)
-        message = StickerSendMessage(
-                package_id=11539,
-                sticker_id=52114112
-            )
+#    elif text.isnumeric():
+#        print('stock_id={}'.format(text))
+#        executor.submit(get_stock_info,text,uid)
+#        message = StickerSendMessage(
+#                package_id=11539,
+#                sticker_id=52114112
+#            )
     else:
-        bubble = BubbleContainer(
-            direction='ltr',
-            hero=ImageComponent(
-                url='https://example.com/cafe.jpg',
-                size='full',
-                aspect_ratio='20:13',
-                aspect_mode='cover',
-                action=URIAction(uri='http://example.com', label='label')
-            ),
-            body=BoxComponent(
-                layout='vertical',
-                contents=[
-                    # title
-                    TextComponent(text='Brown Cafe', weight='bold', size='xl'),
-                    # review
-                    BoxComponent(
-                        layout='baseline',
-                        margin='md',
-                        contents=[
-                            IconComponent(size='sm', url='https://example.com/gold_star.png'),
-                            IconComponent(size='sm', url='https://example.com/grey_star.png'),
-                            IconComponent(size='sm', url='https://example.com/gold_star.png'),
-                            IconComponent(size='sm', url='https://example.com/gold_star.png'),
-                            IconComponent(size='sm', url='https://example.com/grey_star.png'),
-                            TextComponent(text='4.0', size='sm', color='#999999', margin='md',
-                                          flex=0)
-                        ]
-                    ),
-                    # info
-                    BoxComponent(
-                        layout='vertical',
-                        margin='lg',
-                        spacing='sm',
-                        contents=[
-                            BoxComponent(
-                                layout='baseline',
-                                spacing='sm',
-                                contents=[
-                                    TextComponent(
-                                        text='Place',
-                                        color='#aaaaaa',
-                                        size='sm',
-                                        flex=1
-                                    ),
-                                    TextComponent(
-                                        text='Shinjuku, Tokyo',
-                                        wrap=True,
-                                        color='#666666',
-                                        size='sm',
-                                        flex=5
-                                    )
-                                ],
-                            ),
-                            BoxComponent(
-                                layout='baseline',
-                                spacing='sm',
-                                contents=[
-                                    TextComponent(
-                                        text='Time',
-                                        color='#aaaaaa',
-                                        size='sm',
-                                        flex=1
-                                    ),
-                                    TextComponent(
-                                        text="10:00 - 23:00",
-                                        wrap=True,
-                                        color='#666666',
-                                        size='sm',
-                                        flex=5,
-                                    ),
-                                ],
-                            ),
-                        ],
-                    )
-                ],
-            ),
-            footer=BoxComponent(
-                layout='vertical',
-                spacing='sm',
-                contents=[
-                    # callAction, separator, websiteAction
-                    #SpacerComponent(size='sm'),
-                    # callAction
-                    ButtonComponent(
-                        style='link',
-                        height='sm',
-                        action=URIAction(label='CALL', uri='tel:000000'),
-                    ),
-                    # separator
-                    SeparatorComponent(),
-                    # websiteAction
-                    ButtonComponent(
-                        style='link',
-                        height='sm',
-                        action=URIAction(label='WEBSITE', uri="https://example.com")
-                    )
-                ]
-            ),
+        ### 圖片
+        message = ImageMessage(
+            original_content_url='https://i.imgur.com/B9ftEHJ.jpg',
+            preview_image_url='https://i.imgur.com/B9ftEHJ.jpg'
         )
-        message = FlexSendMessage(alt_text="hello", contents=bubble)
-
+    #end if
+        
     time.sleep(1)
     line_bot_api.reply_message(event.reply_token,message)
 
