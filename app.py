@@ -128,6 +128,8 @@ executor = ThreadPoolExecutor(3)
 
 requests.packages.urllib3.disable_warnings()
 
+headers = {'Authorization': CWB_AUTHED_KEY, 'User-Agent': 'Mozilla/5.0 (Macintosh; Intel Mac OS X 10_10_1) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/39.0.2171.95 Safari/537.36'}
+
 def get_news_push(userid):
     """
     建立一個抓最新消息的function
@@ -216,7 +218,7 @@ def get_current_weather(keyword, userid):
     url = 'https://opendata.cwb.gov.tw/api/v1/rest/datastore/{}?Authorization={}' \
         '&locationName={}&sort=time&timeFrom={}&timeTo={}'.format(apiNm, CWB_AUTHED_KEY, ','.join(city), timeFrom, timeTo)
     
-    resp = requests.get(url,verify=False)
+    resp = requests.get(url, headers=headers, verify=False)
     if resp.status_code != 200:
         print('Invalid url:', resp.status_code)
         line_bot_api.push_message(userid, TextSendMessage(text=errMsg))
