@@ -210,13 +210,16 @@ def get_current_weather(keyword, userid):
 
     url = 'https://opendata.cwb.gov.tw/api/v1/rest/datastore/{}?Authorization={}' \
         '&locationName={}&sort=time&timeFrom={}&timeTo={}'.format(apiNm, CWB_AUTHED_KEY, ','.join(city), timeFrom, timeTo)
+        
+    print(url)
+    
     resp = requests.get(url)
     if resp.status_code != 200:
         print('Invalid url:', resp.url)
         line_bot_api.push_message(userid, TextSendMessage(text=errMsg))
         return
 
-    print(url)
+
     print(resp.text)
     
     tww = json.loads(resp.text)
