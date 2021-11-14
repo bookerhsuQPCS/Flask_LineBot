@@ -87,7 +87,7 @@ category_set = ('1900000000',
         '4100000000',
         '3500000000')
 
-headers = {
+mm_headers = {
        'accept-encoding': 'gzip, deflate, br', 
        'accept-language': 'zh-TW,zh;q=0.9,en-US;q=0.8,en;q=0.7', 
        'Cache-Control': 'no-cache',
@@ -327,15 +327,15 @@ def getmomo_search_push(keyword,userid):
     #end if
     print('getmomo_search_push:end')
 
-def getmomo_top30_push(category,userid):
+def get_momo_top30(category,userid):
     print('uid: '+userid)
     print('category:'+category)
-    target_url = 'https://m.momoshop.com.tw/category.momo?cn={}&top30=y&imgSH=fourCardStyle'.format(category)
+    target_url = 'https://m.momoshop.com.tw/category.momo?cn={}&top30New=y'.format(category)
     
     # handle request body
     try:
         requests.packages.urllib3.disable_warnings()
-        response = requests.get(url=target_url, headers=headers, timeout=15)
+        resp = requests.get(url=target_url, headers=mm_headers, timeout=15)
     except requests.exceptions.Timeout as tim:
         # Maybe set up for a retry, or continue in a retry loop
         print(tim)
@@ -351,40 +351,45 @@ def getmomo_top30_push(category,userid):
     except requests.exceptions.HTTPError as err:
         print(err)
         return
-      
-    html = etree.HTML(response.text)
-    _imgs = html.xpath('//article[@class="prdListArea"]//li//img[@class="goodsImg"]')
-    message = None
-    if len(_imgs) > 0:   
-        _carouse_columns = []
-        path = html.xpath('//article[@class="pathArea"]//li/a')[0]
-        for idx, img in enumerate(_imgs[:10], start=0):
-            _alt = img.attrib['alt']
-            match = re.search(r'【.+】(.+)', _alt)
-            if match is not None:
-                _alt = match.group(1)
-            #end if
-            print(img.attrib)
+ 
+    soup = BeautifulSoup(resp.text,"lxml")
+    _cn = category
+    _carouse_columns = []
+    pathArea = soup.find("article", class_="pathArea")
+    if pathArea is not None and len(pathArea) > 0:
+        _cn = pathArea.find("a", attrs={"cn": category}).text
+    #end if
 
-            _colu = CarouselColumn(
-                thumbnail_image_url=('https:'+img.attrib['org']) if 'http' not in img.attrib['org'] else img.attrib['org'],
-                text=_alt,
-                actions=[
-                    URITemplateAction(
-                        label='去看看',
-                        uri=('https://m.momoshop.com.tw'+img.getparent().getparent().attrib['href']) if 'http' not in img.getparent().getparent().attrib['href'] else img.getparent().getparent().attrib['href']
-                    )
-                ]
-            )
+    productInfo = soup.find_all("a", class_="productInfo")
+    if productInfo is not None and len(productInfo) > 0:
+        for pd in productInfo[:10]:
+            prdImgWrap = pd.find("div", class_="prdImgWrap")
+            if prdImgWrap is not None:
+                act = prdImgWrap.find("div", class_="swiper-slide-active")
+                if act is None:
+                    act = prdImgWrap.find_all("div", class_="swiper-slide", limit=1)[0]
+                #end if
+                img = act.find("img")
+                _alt = img['alt']
                 
-            _carouse_columns.append(_colu)
-    
-        #end for
+                _column = CarouselColumn(
+                    thumbnail_image_url=img['data-original'] if 'https://' in img['data-original'] else 'https://'.format(img['data-original']),
+                    text=_alt,
+                    actions=[
+                        URITemplateAction(
+                            label='去看看',
+                            uri=pd['href'] if 'https://' in pd['href'] else 'https://{}'.format(pd['href'])
+                        )
+                    ]
+                )
+                _carouse_columns.append(_column)
+            #end if
+        # end loop
         
         print(_carouse_columns)
        
-        message = TemplateSendMessage(
-            alt_text=path.text+' TOP30',
+        msg = TemplateSendMessage(
+            alt_text='{} TOP30'.format(_cn),
             imageAspectRatio='square',
             #imageSize='contain',
             template=CarouselTemplate(
@@ -392,7 +397,7 @@ def getmomo_top30_push(category,userid):
             )
         )
 
-        line_bot_api.push_message(userid, message)
+        line_bot_api.push_message(userid, msg)
     #end if
     print('getmomo_top30_push: end')
 
@@ -514,7 +519,11 @@ def handle_text_message(event):
           
     elif text.lower() == 'top30':
         print('keyword={}'.format(text.lower()))
-        executor.submit(getmomo_top30_push,category_set[random.randint(0, len(category_set)-1)],uid)
+        category = category_set[random.randint(0, len(category_set)-1)]
+        if len(text.split(' ')) > 1:
+            category = text.split(' ')[1];
+        #end if
+        executor.submit(get_momo_top30,category,uid)
 
         message = StickerSendMessage(
                 package_id=11537,
