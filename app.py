@@ -201,13 +201,15 @@ def get_current_weather(keyword, userid):
         line_bot_api.push_message(userid, TextSendMessage(text=errMsg))
         return
     
-    if now.hour > 5 and now.hour < 23:
+    print(now)
+    
+    if now.hour > 4:
         timeFrom = '{}T06:00:00'.format(now.strftime("%Y-%m-%d"))
         timeTo = '{}T18:00:00'.format(now.strftime("%Y-%m-%d"))
-    elif now.hour > 22:
-        timeFrom = '2021-11-14T18:00:00'
+    elif now.hour > 22 or now.hour < 5:
         now += datetime.timedelta(days=1)
-        timeTo = '{}T06:00:00'.format(now.strftime("%Y-%m-%d"))
+        timeFrom = '{}T06:00:00'.format(now.strftime("%Y-%m-%d"))
+        timeTo = '{}T18:00:00'.format(now.strftime("%Y-%m-%d"))
     else:
         timeTo = '{}T06:00:00'.format(now.strftime("%Y-%m-%d"))
         now -= datetime.timedelta(days=1)
