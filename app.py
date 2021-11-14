@@ -175,7 +175,7 @@ def get_current_weather(keyword, userid):
     if keyword[-2:] == '天氣':
         keyword = keyword[:-2]
     
-    if keyword[:-1] == '縣' or keyword[:-1] == '市':
+    if keyword[-1] == '縣' or keyword[-1] == '市':
         city = [keyword]
     else:
         if keyword == '雙北':
