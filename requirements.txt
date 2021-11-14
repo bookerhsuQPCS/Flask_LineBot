@@ -2,6 +2,8 @@ gunicorn
 Flask
 line-bot-sdk
 lxml
+json
+datetime
 feedparser
 beautifulsoup4
 pysnooper

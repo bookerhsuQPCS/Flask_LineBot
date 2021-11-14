@@ -6,19 +6,20 @@ Created on Sat Aug 18 01:00:17 2018
 """
 
 import requests, re, feedparser, random, time
-import urllib
+import json, datetime, pysnooper
 from lxml import etree
 from bs4 import BeautifulSoup
 from flask import Flask, request, abort
 from concurrent.futures import ThreadPoolExecutor
-import pysnooper
 
 from linebot import (
     LineBotApi, WebhookHandler
 )
+
 from linebot.exceptions import (
     InvalidSignatureError
 )
+
 from linebot.models import (
     MessageEvent, TextMessage, TextSendMessage,
     SourceUser, SourceGroup, SourceRoom,
@@ -99,8 +100,30 @@ headers = {
 
 CWB_AUTHED_KEY = 'CWB-2D440B6F-B34D-4763-A117-B7763E4B84F2'
 
-executor = ThreadPoolExecutor(3)
+TAIWAN_CITY = {'宜蘭縣':'F-D0047-001',
+'桃園市':'F-D0047-005',
+'新竹縣':'F-D0047-009',
+'苗栗縣':'F-D0047-013',
+'彰化縣':'F-D0047-017',
+'南投縣':'F-D0047-021',
+'雲林縣':'F-D0047-025',
+'嘉義縣':'F-D0047-029',
+'屏東縣':'F-D0047-033',
+'臺東縣':'F-D0047-037',
+'花蓮縣':'F-D0047-041',
+'澎湖縣':'F-D0047-045',
+'基隆市':'F-D0047-049',
+'新竹市':'F-D0047-053',
+'嘉義市':'F-D0047-057',
+'臺北市':'F-D0047-061',
+'高雄市':'F-D0047-065',
+'新北市':'F-D0047-069',
+'臺中市':'F-D0047-073',
+'臺南市':'F-D0047-077',
+'連江縣':'F-D0047-081',
+'金門縣':'F-D0047-085'}
 
+executor = ThreadPoolExecutor(3)
 
 def get_news_push(userid):
     """
@@ -123,7 +146,7 @@ def get_news_push(userid):
     #end if
     print('get_news_push: end')
 
-def get_current_weather(city,userid):
+def get_current_weather(keyword, userid):
     """
     Get current weather in specific city.
 
@@ -131,25 +154,103 @@ def get_current_weather(city,userid):
         city: City Name
 
     Returns:
-        Current weather string
-    """
-    response = urllib.request.urlopen('http://opendata.cwb.gov.tw/opendataapi?dataid=F-C0032-001&authorizationkey={}'.format(CWB_AUTHED_KEY))
-    tree = etree.parse(response).getroot()
+        Line TextSendMessage
+    """ 
+    '''https://opendata.cwb.gov.tw/api/v1/rest/datastore/F-C0032-001?Authorization=CWB-52F7E175-5DC9-4E41-9D16-6ED798D0C27E
+        &locationName=%E5%AE%9C%E8%98%AD%E7%B8%A3,%E8%8A%B1%E8%93%AE%E7%B8%A3&sort=time&timeFrom=2021-11-14T06%3A00%3A00&timeTo=2021-11-14T08%3A00%3A00
+    '''
+    
+    #message = TextSendMessage(text='很抱歉，無法提供您{}的天氣。'.format(city))
+    errMsg = '目前的{}無資料'.format(keyword)
+    apiNm = 'F-C0032-001'
+    now = datetime.datetime.now()
+    timeFrom = '2021-11-14T06:00:00'
+    timeTo = '2021-11-14T18:00:00'
+    city = []
+    msg = []
 
-    for location in tree.findall('.//{urn:cwb:gov:tw:cwbcommon:0.1}location'):
-        if city in location[0].text:
-            # If the city is found, access its child direct.
-            message = TextSendMessage(text='%s目前的天氣為%s。\n' \
-                   '溫度為 %s 至 %s ℃，降雨機率為 %s %%。' \
-                   % (location[0].text, location[1][1][2][0].text,
-                      location[3][1][2][0].text, location[2][1][2][0].text,
-                      location[5][1][2][0].text))
-            
-            line_bot_api.push_message(userid, message)
-            return        
+    if keyword[0] == '台':
+        keyword = '臺' + keyword[1:];
+    
+    if keyword[-2:] == '天氣':
+        keyword = keyword[:-2]
+    
+    if keyword[:-1] == '縣' or keyword[:-1] == '市':
+        city = [keyword]
+    else:
+        if keyword == '雙北':
+            city = ['臺北市','新北市']
+        elif keyword == '離島':
+            city = ['澎湖縣','金門縣','連江縣']
+        elif keyword == '東部':
+            city = ['宜蘭縣','花蓮縣','臺東縣']
+        else:
+            for name in TAIWAN_CITY.keys():
+                if name[:-1] == keyword:
+                    city.append(name)
+                #end if
+            #end loop
+    #end if
+    
+    if len(city) == 0:
+        line_bot_api.push_message(userid, TextSendMessage(text=errMsg))
+        return
+    
+    if now.hour > 5 and now.hour < 23:
+        timeFrom = '{}T06:00:00'.format(now.strftime("%Y-%m-%d"))
+        timeTo = '{}T18:00:00'.format(now.strftime("%Y-%m-%d"))
+    elif now.hour > 22:
+        timeFrom = '2021-11-14T18:00:00'
+        now += datetime.timedelta(days=1)
+        timeTo = '{}T06:00:00'.format(now.strftime("%Y-%m-%d"))
+    else:
+        timeTo = '{}T06:00:00'.format(now.strftime("%Y-%m-%d"))
+        now -= datetime.timedelta(days=1)
+        timeFrom = '{}T18:00:00'.format(now.strftime("%Y-%m-%d"))
 
-    message = TextSendMessage(text='很抱歉，無法提供您{}的天氣。'.format(city))
-    line_bot_api.push_message(userid, message)
+    url = 'https://opendata.cwb.gov.tw/api/v1/rest/datastore/{}?Authorization={}' \
+        '&locationName={}&sort=time&timeFrom={}&timeTo={}'.format(apiNm, CWB_AUTHED_KEY, ','.join(city), timeFrom, timeTo)
+    resp = requests.get(url)
+    if resp.status_code != 200:
+        print('Invalid url:', resp.url)
+        line_bot_api.push_message(userid, TextSendMessage(text=errMsg))
+        return
+
+    tww = json.loads(resp.text)
+    
+    if tww['success'] != 'true':
+        line_bot_api.push_message(userid, TextSendMessage(text=errMsg))
+        return
+        
+    wWx = ''
+    wPop = ''
+    wMinT = ''
+    wCT = ''
+    wMaxT = ''
+    records = tww['records']
+    location = records['location']
+    for loc in location:
+        # If the city is found, access its child direct.
+        weatherElement = loc['weatherElement']
+        for wElm in weatherElement:
+            eN = wElm['elementName']
+            wtime = wElm['time']
+            if eN == 'Wx':
+                wWx = wtime[0]['parameter']['parameterName']
+            elif eN == 'PoP':
+                wPop = wtime[0]['parameter']['parameterName']
+            elif eN == 'MinT':
+                wMinT = wtime[0]['parameter']['parameterName']
+            elif eN == 'CT':
+                wCT = wtime[0]['parameter']['parameterName']
+            elif eN == 'MaxT':
+                wMaxT = wtime[0]['parameter']['parameterName']
+            #end if
+        #end loop
+        msg.append('%s目前的天氣為%s。\n溫度為 %s 至 %s ℃，降雨機率為 %s %%。\n %s' % (loc['locationName'], wWx, wMinT, wMaxT, wPop, wCT))
+    #end loop
+
+    line_bot_api.push_message(userid, TextSendMessage(text='\n'.join(msg)))
 
 def getmomo_search_push(keyword,userid):
     print('uid: '+userid)
@@ -353,9 +454,9 @@ def handle_text_message(event):
 #            )
 
     # 買東西
-    if text == '試試' or text == '幫助' or text.lower() == 'help' or text.lower() == 'try':
-        response_message = '\n1.help\n2.找東西\n3.top30\n4.[台北..]天氣\n5.news\n'
-        message = TextSendMessage(text='貓喵@:{}'.format(response_message))
+    if text == '試試' or text.lower() == 'help':
+        response_message = '\n1.help\n2.找東西\n3.top30\n4.[台北市|雙北|東部|離島|..]天氣\n5.news\n'
+        message = TextSendMessage(text='貓喵:{}'.format(response_message))
     elif text == '新聞' or text.lower() == 'news':
         executor.submit(get_news_push,uid)
 
@@ -365,7 +466,7 @@ def handle_text_message(event):
             )
 
     # 傳送貼圖
-    elif text == '貼圖' or text.lower() == 'pic':
+    elif text == '貼圖':
         package_id = random.randint(1, 2)
         sticker_id = 1
         if package_id == '1':
@@ -411,9 +512,9 @@ def handle_text_message(event):
 
     elif u'天氣' in text:
         print('keyword={}'.format(text))
-        re_weather = re.compile(r"(\w+)天氣")
-        city = re.match(re_weather,text)
-        executor.submit(get_current_weather,re.sub(r"(縣|市)", "", re.sub(r"台", "臺", city.group(1))),uid)
+        #re_weather = re.compile(r"(\w+)天氣")
+        #city = re.match(re_weather,text)
+        executor.submit(get_current_weather,text,uid)
 
         message = StickerSendMessage(
                 package_id=11539,
@@ -427,8 +528,6 @@ def handle_text_message(event):
                 sticker_id=52114112
             )
     else:
-#        response_message = text #chatbot.get_response(message)
-#        message = TextSendMessage(text='貓喵@:{}'.format(response_message))
         bubble = BubbleContainer(
             direction='ltr',
             hero=ImageComponent(
@@ -510,7 +609,7 @@ def handle_text_message(event):
                 spacing='sm',
                 contents=[
                     # callAction, separator, websiteAction
-                    SpacerComponent(size='sm'),
+                    #SpacerComponent(size='sm'),
                     # callAction
                     ButtonComponent(
                         style='link',
@@ -566,11 +665,10 @@ def handle_content_message(event):
 
 @handler.add(MessageEvent, message=FileMessage)
 def handle_file_message(event):
-    mm = None
+    xx = None
 
 @handler.add(FollowEvent)
 def handle_follow(event):
-
     profile = line_bot_api.get_profile(event.source.user_id)
     nameid = profile.display_name
     uid = profile.user_id
@@ -588,7 +686,6 @@ def handle_unfollow():
 
 @handler.add(JoinEvent)
 def handle_join(event):
-    
     profile = line_bot_api.get_profile(event.source.user_id)
     nameid = profile.display_name
     uid = profile.user_id
