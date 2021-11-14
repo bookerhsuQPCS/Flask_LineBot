@@ -215,7 +215,7 @@ def get_current_weather(keyword, userid):
         
     print(url)
     
-    resp = requests.get(url)
+    resp = requests.get(url,verify=False)
     if resp.status_code != 200:
         print('Invalid url:', resp.url)
         line_bot_api.push_message(userid, TextSendMessage(text=errMsg))
