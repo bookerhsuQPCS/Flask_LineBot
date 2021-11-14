@@ -161,7 +161,7 @@ def get_current_weather(keyword, userid):
     '''
     
     #message = TextSendMessage(text='很抱歉，無法提供您{}的天氣。'.format(city))
-    errMsg = '目前的{}無資料'.format(keyword)
+    errMsg = u'目前的{}無資料'.format(keyword)
     apiNm = 'F-C0032-001'
     now = datetime.datetime.now()
     timeFrom = '2021-11-14T06:00:00'
@@ -169,21 +169,23 @@ def get_current_weather(keyword, userid):
     city = []
     msg = []
 
-    if keyword[0] == '台':
-        keyword = '臺' + keyword[1:];
+    if keyword[0] == u'台':
+        keyword = u'臺' + keyword[1:];
     
-    if keyword[-2:] == '天氣':
+    if keyword[-2:] == u'天氣':
         keyword = keyword[:-2]
+        
+    print(keyword)
     
-    if keyword[-1] == '縣' or keyword[-1] == '市':
+    if keyword[-1] == u'縣' or keyword[-1] == u'市':
         city = [keyword]
     else:
-        if keyword == '雙北':
-            city = ['臺北市','新北市']
-        elif keyword == '離島':
-            city = ['澎湖縣','金門縣','連江縣']
-        elif keyword == '東部':
-            city = ['宜蘭縣','花蓮縣','臺東縣']
+        if keyword == u'雙北':
+            city = [u'臺北市',u'新北市']
+        elif keyword == u'離島':
+            city = [u'澎湖縣',u'金門縣',u'連江縣']
+        elif keyword == u'東部':
+            city = [u'宜蘭縣',u'花蓮縣',u'臺東縣']
         else:
             for name in TAIWAN_CITY.keys():
                 if name[:-1] == keyword:
