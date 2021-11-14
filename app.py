@@ -7,6 +7,7 @@ Created on Sat Aug 18 01:00:17 2018
 
 import requests, re, feedparser, random, time
 import json, datetime, pysnooper
+import requests.packages.urllib3
 from lxml import etree
 from bs4 import BeautifulSoup
 from flask import Flask, request, abort
@@ -124,6 +125,8 @@ TAIWAN_CITY = {'宜蘭縣':'F-D0047-001',
 '金門縣':'F-D0047-085'}
 
 executor = ThreadPoolExecutor(3)
+
+requests.packages.urllib3.disable_warnings()
 
 def get_news_push(userid):
     """
