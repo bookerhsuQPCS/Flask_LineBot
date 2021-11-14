@@ -216,6 +216,9 @@ def get_current_weather(keyword, userid):
         line_bot_api.push_message(userid, TextSendMessage(text=errMsg))
         return
 
+    print(url)
+    print(resp.text)
+    
     tww = json.loads(resp.text)
     
     if tww['success'] != 'true':
