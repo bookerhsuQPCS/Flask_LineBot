@@ -376,12 +376,12 @@ def get_momo_top30(category,userid):
                 _alt = img['alt']
                 
                 _column = CarouselColumn(
-                    thumbnail_image_url=img['data-original'] if 'http' in img['data-original'] else 'https:/'.format(img['data-original']),
+                    thumbnail_image_url=img['data-original'] if 'http' in img['data-original'] else 'https://m.momoshop.com.tw{}'.format(img['data-original']),
                     text=_alt,
                     actions=[
                         URITemplateAction(
                             label='去看看',
-                            uri=pd['href'] if 'http' in pd['href'] else 'https:/{}'.format(pd['href'])
+                            uri=pd['href'] if 'http' in pd['href'] else 'https://m.momoshop.com.tw{}'.format(pd['href'])
                         )
                     ]
                 )
