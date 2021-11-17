@@ -28,7 +28,7 @@ from linebot.models import (
     TemplateSendMessage, ConfirmTemplate, MessageAction,
     ButtonsTemplate, ImageCarouselTemplate, ImageCarouselColumn, URIAction,
     PostbackAction, DatetimePickerAction,
-    URITemplateAction, MessageTemplateAction,
+    URITemplateAction, MessageTemplateAction, PostbackTemplateAction,
     CameraAction, CameraRollAction, LocationAction,
     CarouselTemplate, CarouselColumn, PostbackEvent,
     StickerMessage, StickerSendMessage, LocationMessage, LocationSendMessage,
@@ -374,9 +374,11 @@ def get_momo_top30(category,userid):
                 #end if
                 img = act.find("img")
                 _alt = img['alt']
+                img_url = img['data-original'] if 'http' in img['data-original'] else 'https://m.momoshop.com.tw{}'.format(img['data-original'])
+                img_url = img_url.replace('.webp','.jpg')
                 
                 _column = CarouselColumn(
-                    thumbnail_image_url=img['data-original'] if 'http' in img['data-original'] else 'https://m.momoshop.com.tw{}'.format(img['data-original']),
+                    thumbnail_image_url=img_url,
                     text=_alt,
                     actions=[
                         URITemplateAction(
@@ -394,7 +396,7 @@ def get_momo_top30(category,userid):
         msg = TemplateSendMessage(
             alt_text='{} TOP30'.format(_cn),
             imageAspectRatio='square',
-            #imageSize='contain',
+            imageSize='contain',
             template=CarouselTemplate(
                 columns=_carouse_columns
             )
@@ -479,19 +481,19 @@ def handle_text_message(event):
                         title='選單',
                         text='  ',
                         actions=[
-                            MessageTemplateAction(
+                            PostbackTemplateAction(
                                 label='最新新聞',
                                 text='news'
                             ),
-                            MessageTemplateAction(
+                            PostbackTemplateAction(
                                 label='雙北天氣',
                                 text='雙北天氣'
                             ),
-                            MessageTemplateAction(
+                            PostbackTemplateAction(
                                 label='離島天氣',
                                 text='離島天氣'
                             ),
-                            MessageTemplateAction(
+                            PostbackTemplateAction(
                                 label='銷售排行',
                                 text='top30'
                             )
