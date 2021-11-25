@@ -7,7 +7,7 @@ Created on Sat Nov 18 21:00:17 21
 """
 
 import requests, re, feedparser, random, time
-import json, datetime, pysnooper
+import json, datetime, pysnooper, threading
 import requests.packages.urllib3
 from lxml import etree
 from bs4 import BeautifulSoup
@@ -134,6 +134,20 @@ headers = {
         'User-Agent': 'Mozilla/5.0 (Macintosh; Intel Mac OS X 10_10_1) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/39.0.2171.95 Safari/537.36'
     }
 
+# my background thread
+class MyPePe():
+
+    def __init__(self, message):
+        self.message = message
+        
+        thread = threading.Thread(target=self.run, args=())
+        thread.daemon = True
+        thread.start()
+
+    def run(self):
+        time.sleep(10)
+        print(f'run MyWorker with parameter {self.message}')
+
 def get_news(userid):
     """
     建立一個抓最新消息的function
@@ -226,9 +240,6 @@ def get_current_weather(keyword, userid):
         print('Invalid url:', resp.status_code)
         line_bot_api.push_message(userid, TextSendMessage(text=errMsg))
         return
-
-#    print(url)
-#    print(resp.text)
     
     tww = json.loads(resp.text)
     
@@ -481,19 +492,19 @@ def handle_text_message(event):
                         title='選單',
                         text='  ',
                         actions=[
-                            PostbackTemplateAction(
+                            MessageTemplateAction(
                                 label='最新新聞',
                                 text='news'
                             ),
-                            PostbackTemplateAction(
+                            MessageTemplateAction(
                                 label='雙北天氣',
                                 text='雙北天氣'
                             ),
-                            PostbackTemplateAction(
+                            MessageTemplateAction(
                                 label='離島天氣',
                                 text='離島天氣'
                             ),
-                            PostbackTemplateAction(
+                            MessageTemplateAction(
                                 label='銷售排行',
                                 text='top30'
                             )
