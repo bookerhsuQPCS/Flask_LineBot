@@ -8,7 +8,7 @@ Created on Sat Nov 18 21:00:17 21
 
 import requests, re, feedparser, random, time
 import json, datetime, pysnooper, threading
-import requests.packages.urllib3
+import requests.packages.urllib3, logging
 from lxml import etree
 from bs4 import BeautifulSoup
 from flask import Flask, request, abort
@@ -133,6 +133,8 @@ headers = {
         'Authorization': CWB_AUTHED_KEY, 
         'User-Agent': 'Mozilla/5.0 (Macintosh; Intel Mac OS X 10_10_1) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/39.0.2171.95 Safari/537.36'
     }
+
+logging.basicConfig(filename='app.log', encoding='utf-8', format='%(asctime)s %(message)s', datefmt='%m/%d/%Y %I:%M:%S %p', level=logging.INFO)
 
 # my background thread
 class MyPePe():
@@ -286,7 +288,7 @@ def get_momo_search(keyword,userid):
     # handle request body
     try:
         requests.packages.urllib3.disable_warnings()
-        response = requests.get(url=target_url, headers=headers, timeout=15)
+        resp = requests.get(url=target_url, headers=mm_headers, timeout=15)
     except requests.exceptions.Timeout as tim:
         # Maybe set up for a retry, or continue in a retry loop
         print(tim)
@@ -302,27 +304,32 @@ def get_momo_search(keyword,userid):
     except requests.exceptions.HTTPError as err:
         print(err)
         return
-  
-    _html = etree.HTML(response.text)
-    _imgs = _imgs = _html.xpath('//article[contains(@class, "prdListArea")]//div/img')
-    message = None
-    
-    if len(_imgs) > 0:   
-        _columns = []
-        for idx, img in enumerate(_imgs[:10], start=0):
-            _title = img.attrib['title']
+ 
+    soup = BeautifulSoup(resp.text,"lxml")
+    _carouse_columns = []
+
+    prdListArea = soup.find("article", class_="prdListArea")
+    if prdListArea is not None:
+        _li_a = prdListArea.find_all('li', class_='goodsItemLi')
+        for idx, _li in enumerate(_li_a[:10], start=0):
+            _a = _li.find('a')
+            img  = _a.find('div',class_='swiper-wrapper').find('img')
+            _title = img['title']
             match = re.search(r'【.+】(.+)', _title)
             if match is not None:
                 _title = match.group(1)
             #end if
+            
+            img_url = 'https:{}'.format(img['src']) if 'http' not in img['src'] else img['src']
+            img_url = img_url.replace('.webp','.jpg')
     
-            _columns.append(CarouselColumn(
-                    thumbnail_image_url=('https:'+img.attrib['src']) if 'http' not in img.attrib['src'] else img.attrib['src'],
+            _carouse_columns.append(CarouselColumn(
+                    thumbnail_image_url=img_url,
                     text=_title,
                     actions=[
                         URITemplateAction(
                             label='去逛逛',
-                            uri=('https://m.momoshop.com.tw'+img.getparent().getparent().attrib['href']) if 'http' not in img.getparent().getparent().attrib['href'] else img.getparent().getparent().attrib['href']
+                            uri=('https://m.momoshop.com.tw'+_a['href']) if 'http' not in _a['href'] else _a['href']
                         )
                     ]
                 )
@@ -333,7 +340,7 @@ def get_momo_search(keyword,userid):
         message = TemplateSendMessage(
             alt_text='Carousel template',
             template=CarouselTemplate(
-                columns=_columns
+                columns=_carouse_columns
             )
         )
     
@@ -478,6 +485,10 @@ def handle_text_message(event):
     print('uid: {}'.format(uid))
     print('name:{}'.format(nameid))
     print('keyword:{}'.format(text))
+    
+    logging.info('uid: {}'.format(uid))
+    logging.info('name:{}'.format(nameid))
+    logging.info('keyword:{}'.format(text))
 
     # 買東西
     if text == '試試' or text.lower() == 'help':
