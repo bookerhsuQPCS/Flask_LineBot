@@ -9,7 +9,6 @@ Created on Sat Nov 18 21:00:17 21
 import requests, re, feedparser, random, time
 import json, datetime, pysnooper, threading
 import requests.packages.urllib3, logging
-from lxml import etree
 from bs4 import BeautifulSoup
 from flask import Flask, request, abort
 from concurrent.futures import ThreadPoolExecutor
@@ -134,7 +133,7 @@ headers = {
         'User-Agent': 'Mozilla/5.0 (Macintosh; Intel Mac OS X 10_10_1) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/39.0.2171.95 Safari/537.36'
     }
 
-logging.basicConfig(filename='app.log', encoding='utf-8', format='%(asctime)s %(message)s', datefmt='%m/%d/%Y %I:%M:%S %p', level=logging.INFO)
+#logging.basicConfig(filename='app.log', encoding='utf-8', format='%(asctime)s %(message)s', datefmt='%m/%d/%Y %I:%M:%S %p', level=logging.INFO)
 
 # my background thread
 class MyPePe():
@@ -486,9 +485,9 @@ def handle_text_message(event):
     print('name:{}'.format(nameid))
     print('keyword:{}'.format(text))
     
-    logging.info('uid: {}'.format(uid))
-    logging.info('name:{}'.format(nameid))
-    logging.info('keyword:{}'.format(text))
+#    logging.info('uid: {}'.format(uid))
+#    logging.info('name:{}'.format(nameid))
+#    logging.info('keyword:{}'.format(text))
 
     # 買東西
     if text == '試試' or text.lower() == 'help':
