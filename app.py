@@ -596,7 +596,7 @@ def handle_text_message(event):
             text='變耕圖士尋錫。',
             sender=Sender(
             name="貓咪票票",
-                icon_url="https://imgbox.com/gallery/edit/SdTKm58fhm/A7Wyl1gfBgslZhKU"
+                icon_url="https://thumbs2.imgbox.com/ac/1b/UEL3GP3P_t.png"
             )
         )
     else:
