@@ -591,6 +591,14 @@ def handle_text_message(event):
 #                package_id=11539,
 #                sticker_id=52114112
 #            )
+    elif text.lower() == 'icon':
+        message = TextSendMessage(
+             text='變耕圖士尋錫。',
+             sender=Sender(
+                 name="貓咪票票",
+                 icon_url="https://imgbox.com/gallery/edit/SdTKm58fhm/A7Wyl1gfBgslZhKU")
+             )
+)
     else:
         ### 圖片
         message = ImageMessage(
