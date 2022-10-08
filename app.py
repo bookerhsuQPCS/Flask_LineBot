@@ -8,7 +8,7 @@ Created on Sat Nov 18 21:00:17 21
 
 import requests, re, feedparser, random, time
 import json, datetime, pysnooper, threading
-import requests.packages.urllib3, logging
+import requests.packages.urllib3
 from bs4 import BeautifulSoup
 from flask import Flask, request, abort
 from concurrent.futures import ThreadPoolExecutor
@@ -23,7 +23,7 @@ from linebot.exceptions import (
 
 from linebot.models import (
     MessageEvent, TextMessage, TextSendMessage,
-    SourceUser, SourceGroup, SourceRoom,
+    SourceUser, SourceGroup, SourceRoom, Sender,
     TemplateSendMessage, ConfirmTemplate, MessageAction,
     ButtonsTemplate, ImageCarouselTemplate, ImageCarouselColumn, URIAction,
     PostbackAction, DatetimePickerAction,
@@ -599,7 +599,6 @@ def handle_text_message(event):
                 icon_url="https://imgbox.com/gallery/edit/SdTKm58fhm/A7Wyl1gfBgslZhKU"
             )
         )
-)
     else:
         ### 圖片
         message = ImageMessage(
