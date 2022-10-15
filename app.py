@@ -136,6 +136,12 @@ headers = {
 
 #logging.basicConfig(filename='app.log', encoding='utf-8', format='%(asctime)s %(message)s', datefmt='%m/%d/%Y %I:%M:%S %p', level=logging.INFO)
 
+
+#test code    
+with open(os.path.join(sys.path[0], "join_group.txt"), "r") as f:
+    print(f.read())
+
+
 # my background thread
 class MyPePe():
 
@@ -485,15 +491,9 @@ def handle_text_message(event):
     print('uid: {}'.format(uid))
     print('name:{}'.format(nameid))
     print('keyword:{}'.format(text))
-    
-#    logging.info('uid: {}'.format(uid))
-#    logging.info('name:{}'.format(nameid))
-#    logging.info('keyword:{}'.format(text))
 
     # 買東西
     if text == '試試' or text.lower() == 'help':
-#        response_message = '\n1.help\n2.找東西\n3.top30\n4.[台北市|雙北|東部|離島|..]天氣\n5.news\n'
-#        message = TextSendMessage(text='貓喵:{}'.format(response_message))
 
         ###### 選單介面
         message = TemplateSendMessage(
@@ -641,6 +641,17 @@ def handle_content_message(event):
         ext = 'm4a'
     else:
         return
+    
+    message = TextSendMessage(
+        text='變耕圖士尋錫。',
+        sender=Sender(
+        name="message",
+            icon_url="https://thumbs2.imgbox.com/ac/1b/UEL3GP3P_t.png"
+        )
+    )
+    
+    line_bot_api.reply_message(event.reply_token,message)
+    
 
 @handler.add(MessageEvent, message=FileMessage)
 def handle_file_message(event):
@@ -681,8 +692,5 @@ def handle_leave():
 
 
 if __name__ == '__main__':
-    
-    with open(os.path.join(sys.path[0], "join_group.txt"), "r") as f:
-        print(f.read())
-    
+
     app.run(debug=True)
