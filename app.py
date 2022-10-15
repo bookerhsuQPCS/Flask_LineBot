@@ -412,8 +412,8 @@ def load_image_url():
     _img_urls = []
 
     with open("/app/girl_img_urls.lst", "r") as f:
-        s = f.readline()
-        _img_urls.append(s[0:-1])
+        for row in f:
+            _img_urls.append(row.rstrip('\n'))
     
     return _img_urls
 
