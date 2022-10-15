@@ -558,7 +558,7 @@ def handle_text_message(event):
                 sticker_id=52002770
             )
         
-    elif text.lower() == 'list' and uid == 'U6319002ace8fea14ec4144bbed9628d3':
+    elif text.lower() == 'list' and uid == 'Ube6a1a56c1466ec56cee2ae59ca0b17b':
         
         list = []
         with open("/app/join_group.txt", "r") as f:
