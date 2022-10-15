@@ -12,7 +12,7 @@ import requests.packages.urllib3
 from bs4 import BeautifulSoup
 from flask import Flask, request, abort
 from concurrent.futures import ThreadPoolExecutor
-import pathlib, os
+import os
 
 from linebot import (
     LineBotApi, WebhookHandler
@@ -135,7 +135,7 @@ headers = {
     }
 
 
-with open(os.path.join(pathlib.Path().resolve(), "/join_group.txt"), "r") as f:
+with open(os.path.join("/app", "/join_group.txt"), "r") as f:
     print(f.read())
 
 # my background thread
