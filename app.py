@@ -586,6 +586,11 @@ def handle_text_message(event):
             )     
 
     elif u'美女' in text or u'酒店' in text or u'辣妹' in text:
+        
+        global girl_img_urls
+        if len(girl_img_urls) == 0:
+            girl_img_urls = load_image_url()
+        
         img_url = girl_img_urls[random.randint(0, len(girl_img_urls)-1)]
          
         message = ImageSendMessage(
