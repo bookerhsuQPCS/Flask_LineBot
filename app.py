@@ -631,15 +631,15 @@ def handle_content_message(event):
     else:
         return
     
-    if profile.user_id != 'Ube6a1a56c1466ec56cee2ae59ca0b17b' or profile.user_id != 'U6319002ace8fea14ec4144bbed9628d3':
-        message = StickerSendMessage(
-            package_id=789,
-            sticker_id=10859
-        )
+    # if profile.user_id != 'Ube6a1a56c1466ec56cee2ae59ca0b17b' or profile.user_id != 'U6319002ace8fea14ec4144bbed9628d3':
+    #     message = StickerSendMessage(
+    #         package_id=789,
+    #         sticker_id=10859
+    #     )
         
-        line_bot_api.push_message(profile.user_id,message)
+    #     line_bot_api.push_message(profile.user_id,message)
     
-        return
+    #     return
     
     message = TextSendMessage(
         text=('こんにちは ['+profile.display_name+'] はじめまして.'),
