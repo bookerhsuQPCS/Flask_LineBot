@@ -12,7 +12,6 @@ import requests.packages.urllib3
 from bs4 import BeautifulSoup
 from flask import Flask, request, abort
 from concurrent.futures import ThreadPoolExecutor
-import os
 
 from linebot import (
     LineBotApi, WebhookHandler
@@ -133,10 +132,6 @@ headers = {
         'Authorization': CWB_AUTHED_KEY, 
         'User-Agent': 'Mozilla/5.0 (Macintosh; Intel Mac OS X 10_10_1) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/39.0.2171.95 Safari/537.36'
     }
-
-
-with open("/app/join_group.txt", "r") as f:
-    print(f.read())
 
 # my background thread
 class MyPePe():
@@ -487,6 +482,7 @@ def handle_text_message(event):
     print('uid: {}'.format(uid))
     print('name:{}'.format(nameid))
     print('keyword:{}'.format(text))
+    print(profile)
 
     # 買東西
     if text == '試試' or text.lower() == 'help':
@@ -561,6 +557,14 @@ def handle_text_message(event):
                 package_id=11537,
                 sticker_id=52002770
             )
+        
+    elif text.lower() == 'list':
+        
+        list = []
+        with open("/app/join_group.txt", "r") as f:
+            list.append(f.read())
+            
+        message = TextSendMessage(text='\n'.join(list))
           
     elif text.lower() == 'top30':
         category = category_set[random.randint(0, len(category_set)-1)]
@@ -621,6 +625,11 @@ def handle_location_message(event):
 # Other Message Type
 @handler.add(MessageEvent, message=(ImageMessage, VideoMessage, AudioMessage))
 def handle_content_message(event):
+    
+    profile = line_bot_api.get_profile(event.source.user_id)
+    print(profile)
+    ext = ''
+    
     if isinstance(event.message, ImageMessage):
         ext = 'jpg'
     elif isinstance(event.message, VideoMessage):
@@ -631,10 +640,10 @@ def handle_content_message(event):
         return
     
     message = TextSendMessage(
-        text='變耕圖士尋錫。',
+        text=('こんにちは ['+profile.display_name+'] はじめまして.'),
         sender=Sender(
         name="message",
-            icon_url="https://thumbs2.imgbox.com/ac/1b/UEL3GP3P_t.png"
+            icon_url="https://thumbs2.imgbox.com/ae/38/0ZSxgQda_t.png"
         )
     )
     
@@ -647,33 +656,37 @@ def handle_file_message(event):
 
 @handler.add(FollowEvent)
 def handle_follow(event):
-    profile = line_bot_api.get_profile(event.source.user_id)
-    nameid = profile.display_name
-    uid = profile.user_id
 
-    print('follow uid: '+uid+', name:'+nameid)
+    profile = line_bot_api.get_profile(event.source.user_id)
+    print(profile)
+    
+    with open("/app/join_group.txt", "a") as f:
+        f.write('uid: {}\n'.format(profile.user_id))
+        f.write('name:{}\n'.format(profile.display_name))
+        f.write('follow\n\n')
     
     line_bot_api.reply_message(
-        event.reply_token, TextSendMessage(text='Got follow'))
+        event.reply_token, TextSendMessage(text='welecome {} follow me.').format(profile.display_name))
 
 
 @handler.add(UnfollowEvent)
 def handle_unfollow():
     app.logger.info("Got Unfollow")
 
-
 @handler.add(JoinEvent)
 def handle_join(event):
-    profile = line_bot_api.get_profile(event.source.user_id)
-    nameid = profile.display_name
-    uid = profile.user_id
 
-    print('join uid: '+uid+', name:'+nameid)
+    profile = line_bot_api.get_profile(event.source.user_id)
+    print(profile)
+    
+    with open("/app/join_group.txt", "a") as f:
+        f.write('uid: {}\n'.format(profile.user_id))
+        f.write('name:{}\n'.format(profile.display_name))
+        f.write('follow\n\n')
     
     line_bot_api.reply_message(
-        event.reply_token,
-        TextSendMessage(text='Joined this ' + event.source.type))
-
+        event.reply_token, TextSendMessage(text='welecome {},Joined this {}.').format(profile.display_name, event.source.type))
+    
 @handler.add(LeaveEvent)
 def handle_leave():
     app.logger.info("Got leave")
