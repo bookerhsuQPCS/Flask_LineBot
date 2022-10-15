@@ -413,8 +413,10 @@ def load_image_url():
     print('load_image_url()')
 
     with open("/app/girl_img_urls.lst", "r") as f:
-        _img_urls.append(f.readline())
-   
+        s = f.readline()
+        _img_urls.append(s[0:-1])
+
+    
     return _img_urls
 
 ######################################################
@@ -558,7 +560,7 @@ def handle_text_message(event):
     elif text.lower() == 'list' and uid == 'Ube6a1a56c1466ec56cee2ae59ca0b17b':
         
         list = []
-        with open("/app/member.json", "a") as f:
+        with open("/app/member.json", "r") as f:
             list.append(f.readline())
             
         message = TextSendMessage(text=''.join(list))
