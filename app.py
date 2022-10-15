@@ -135,7 +135,7 @@ headers = {
     }
 
 
-with open(os.path.join("/app", "/join_group.txt"), "r") as f:
+with open("/app/join_group.txt", "r") as f:
     print(f.read())
 
 # my background thread
