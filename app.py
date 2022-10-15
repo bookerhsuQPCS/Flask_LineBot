@@ -561,7 +561,7 @@ def handle_text_message(event):
         with open('/app/member.json') as f:
             content = json.load(f)
             
-        message = TextSendMessage(text=''(content))
+        message = TextSendMessage(text=''.join(content))
           
     elif text.lower() == 'top30':
         category = category_set[random.randint(0, len(category_set)-1)]
@@ -661,9 +661,21 @@ def handle_follow(event):
 
     profile = line_bot_api.get_profile(event.source.user_id)
     
-    with open("/app/member.json", "a") as f:
-        f.write('{} app[web.1]: follow:\n'.format(datetime.strptime(datetime.datetime.now(), "%d-%b-%Y-%H:%M:%S")))
-        f.write('\t\tprofile: {}\n\n'.format(json.dumps(profile, indent=2)))    
+    members = []
+    with open("/app/member.json") as f:
+        members = json.load(f);
+        
+    _profile = {}
+    _profile["displayName"] = profile.displayName
+    _profile["language"] = profile.language
+    _profile["statusMessage"] = profile.statusMessage
+    _profile["userId"] = profile.userId
+    _profile["timestamp"] = datetime.strptime(datetime.datetime.now(), "%d-%b-%Y-%H:%M:%S")
+    _profile["action"] = "Follow"
+    members.append(_profile)
+  
+    with open("/app/member.json", 'w') as f:
+        json.dump(members, f)
 
     line_bot_api.reply_message(
         event.reply_token, TextSendMessage(text='welecome {} follow me.').format(profile.display_name))
@@ -677,10 +689,22 @@ def handle_unfollow(event):
 def handle_join(event):
 
     profile = line_bot_api.get_profile(event.source.user_id)
-    
-    with open("/app/member.json", "a") as f:
-        f.write('{} app[web.1]: join:\n'.format(datetime.strptime(datetime.datetime.now(), "%d-%b-%Y-%H:%M:%S")))
-        f.write('\t\tprofile: {}\n\n'.format(json.dumps(profile, indent=2)))
+
+    members = []
+    with open("/app/member.json") as f:
+        members = json.load(f);
+        
+    _profile = {}
+    _profile["displayName"] = profile.displayName
+    _profile["language"] = profile.language
+    _profile["statusMessage"] = profile.statusMessage
+    _profile["userId"] = profile.userId
+    _profile["timestamp"] = datetime.strptime(datetime.datetime.now(), "%d-%b-%Y-%H:%M:%S")
+    _profile["action"] = "Join"
+    members.append(_profile)
+  
+    with open("/app/member.json", 'w') as f:
+        json.dump(members, f)
     
     line_bot_api.reply_message(
         event.reply_token, TextSendMessage(text='welecome {},Joined this {}.').format(profile.display_name, event.source.type))
