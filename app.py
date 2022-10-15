@@ -637,7 +637,7 @@ def handle_content_message(event):
             sticker_id=10859
         )
         
-        line_bot_api.reply_message(event.reply_token,message)
+        line_bot_api.push_message(profile.user_id,message)
     
         return
     
