@@ -22,7 +22,7 @@ from linebot.exceptions import (
 )
 
 from linebot.models import (
-    MessageEvent, TextMessage, TextSendMessage,
+    MessageEvent, TextMessage, TextSendMessage, ImageSendMessage,
     SourceUser, SourceGroup, SourceRoom, Sender,
     TemplateSendMessage, ConfirmTemplate, MessageAction,
     ButtonsTemplate, ImageCarouselTemplate, ImageCarouselColumn, URIAction,
@@ -883,10 +883,11 @@ def handle_text_message(event):
     elif u'美女' in text or u'酒店' in text or u'辣妹' in text:
         img_url = girl_img_urls[random.randint(0, len(girl_img_urls)-1)]
          
-        message = ImageMessage(
+        message = ImageSendMessage(
             original_content_url=img_url,
             preview_image_url=img_url
         )
+        
     else:
         ### 圖片
         message = StickerSendMessage(
@@ -921,7 +922,6 @@ def handle_location_message(event):
 def handle_content_message(event):
     
     profile = line_bot_api.get_profile(event.source.user_id)
-    print(profile)
     ext = ''
     
     if isinstance(event.message, ImageMessage):
@@ -962,7 +962,6 @@ def handle_file_message(event):
 def handle_follow(event):
 
     profile = line_bot_api.get_profile(event.source.user_id)
-    print(profile)
     
     with open("/app/join_group.txt", "a") as f:
         f.write('{} app[web.1]: uid: {}\n'.format(datetime.strptime(datetime.datetime.now(), "%Y-%b-%dT%H:%M:%S"), profile.user_id))
@@ -981,7 +980,6 @@ def handle_unfollow(event):
 def handle_join(event):
 
     profile = line_bot_api.get_profile(event.source.user_id)
-    print(profile)
     
     with open("/app/join_group.txt", "a") as f:
         f.write('{} app[web.1]: uid: {}\n'.format(datetime.strptime(datetime.datetime.now(), "%Y-%b-%dT%H:%M:%S"), profile.user_id))
