@@ -73,214 +73,7 @@ category_set = ('1900000000',
         '4100000000',
         '3500000000')
 
-girl_img_urls = (
-    'http://isp.s-angels.com/images/default/thumb/m017_yuki.jpg',
-    'http://isp.s-angels.com/images/default/thumb/m071azusa.jpg',
-    'http://isp.s-angels.com/images/default/thumb/riko.jpg',
-    'http://isp.s-angels.com/images/default/thumb/wakaba.jpg',
-    'https://isp.s-angels.com/images/default/thumb/m072_chie.jpg'
-    'https://isp.s-angels.com/images/default/thumb/m072_chie.jpg',
-    'https://isp.s-angels.com/images/default/thumb/m073_momo.jpg',
-    'https://isp.s-angels.com/images/default/thumb/m074_misa.jpg',
-    'https://isp.s-angels.com/images/default/thumb/m075_natsume.jpg',
-    'https://isp.s-angels.com/images/default/thumb/m076_maki.jpg',
-    'https://isp.s-angels.com/images/default/thumb/m077_noa.jpg',
-    'https://isp.s-angels.com/images/default/thumb/m078_remi.jpg',
-    'https://isp.s-angels.com/images/default/thumb/m079_yuuna.jpg',
-    'https://isp.s-angels.com/images/default/thumb/m080_ayumu.jpg',
-    'https://isp.s-angels.com/images/default/thumb/m081_minami.jpg',
-    'https://isp.s-angels.com/images/default/thumb/m082_iori.jpg',
-    'https://isp.s-angels.com/images/default/thumb/m083_ryouko.jpg',
-    'https://isp.s-angels.com/images/default/thumb/m084_ruru.jpg',
-    'https://isp.s-angels.com/images/default/thumb/m085_karin.jpg',
-    'https://isp.s-angels.com/images/default/thumb/m086_azumi.jpg',
-    'https://isp.s-angels.com/images/default/thumb/m087_mika.jpg',
-    'https://isp.s-angels.com/images/default/thumb/m088_eren.jpg',
-    'https://isp.s-angels.com/images/default/thumb/m089_meika.jpg',
-    'https://isp.s-angels.com/images/default/thumb/m090_aruru.jpg',
-    'https://isp.s-angels.com/images/default/thumb/m091_mikoto.jpg',
-    'https://isp.s-angels.com/images/default/thumb/m092_cocomi.jpg',
-    'https://isp.s-angels.com/images/default/thumb/m093_sakurako.jpg',
-    'https://isp.s-angels.com/images/default/thumb/m094_risa.jpg',
-    'https://isp.s-angels.com/images/default/thumb/m095_asuka.jpg',
-    'https://isp.s-angels.com/images/default/thumb/m096_yumi.jpg',
-    'https://isp.s-angels.com/images/default/thumb/m097_marie.jpg',
-    'https://isp.s-angels.com/images/default/thumb/m098_yuna.jpg',
-    'https://isp.s-angels.com/images/default/thumb/m099_mana.jpg',
-    'https://isp.s-angels.com/images/default/thumb/m100_ami.jpg',
-    'https://isp.s-angels.com/images/default/thumb/m101_yuuko.jpg',
-    'https://isp.s-angels.com/images/default/thumb/m102_chiaki.jpg',
-    'https://isp.s-angels.com/images/default/thumb/m103_rui.jpg',
-    'https://isp.s-angels.com/images/default/thumb/m104_tsukasa.jpg',
-    'https://isp.s-angels.com/images/default/thumb/m105_saki.jpg',
-    'https://isp.s-angels.com/images/default/thumb/m106_aya.jpg',
-    'https://isp.s-angels.com/images/default/thumb/m107_naoko.jpg',
-    'https://isp.s-angels.com/images/default/thumb/m108_fumie.jpg',
-    'https://isp.s-angels.com/images/default/thumb/m109_eri.jpg',
-    'https://isp.s-angels.com/images/default/thumb/m110_ruka.jpg',
-    'https://isp.s-angels.com/images/default/thumb/m111_masami.jpg',
-    'https://isp.s-angels.com/images/default/thumb/m112_kiyoka.jpg',
-    'https://isp.s-angels.com/images/default/thumb/m113_taeko.jpg',
-    'https://isp.s-angels.com/images/default/thumb/m114_kanako.jpg',
-    'https://isp.s-angels.com/images/default/thumb/m115_mio.jpg',
-    'https://isp.s-angels.com/images/default/thumb/m116_naho.jpg',
-    'https://isp.s-angels.com/images/default/thumb/m117_maria.jpg',
-    'https://isp.s-angels.com/images/default/thumb/m118_kotomi.jpg',
-    'https://isp.s-angels.com/images/default/thumb/m119_ran.jpg',
-    'https://isp.s-angels.com/images/default/thumb/m120_kotone.jpg',
-    'https://isp.s-angels.com/images/default/thumb/m121_nao.jpg',
-    'https://isp.s-angels.com/images/default/thumb/m122_amika.jpg',
-    'https://isp.s-angels.com/images/default/thumb/m123_naomi.jpg',
-    'https://isp.s-angels.com/images/default/thumb/m124_hikari.jpg',
-    'https://isp.s-angels.com/images/default/thumb/m125_kumi.jpg',
-    'https://isp.s-angels.com/images/default/thumb/m126_azusa.jpg',
-    'https://isp.s-angels.com/images/default/thumb/m127_yurie.jpg',
-    'https://isp.s-angels.com/images/default/thumb/m128_yuria.jpg',
-    'https://isp.s-angels.com/images/default/thumb/m129_mai.jpg',
-    'https://isp.s-angels.com/images/default/thumb/m130_erika.jpg',
-    'https://isp.s-angels.com/images/default/thumb/m131_kana.jpg',
-    'https://isp.s-angels.com/images/default/thumb/m132_ayuka.jpg',
-    'https://isp.s-angels.com/images/default/thumb/m133_natsu.jpg',
-    'https://isp.s-angels.com/images/default/thumb/m134_love.jpg',
-    'https://isp.s-angels.com/images/default/thumb/m135_saki.jpg',
-    'https://isp.s-angels.com/images/default/thumb/m136_yuri.jpg',
-    'https://isp.s-angels.com/images/default/thumb/m137_chika.jpg',
-    'https://isp.s-angels.com/images/default/thumb/m138_airi.jpg',
-    'https://isp.s-angels.com/images/default/thumb/m139_mako.jpg',
-    'https://isp.s-angels.com/images/default/thumb/m140_mayu.jpg',
-    'https://isp.s-angels.com/images/default/thumb/m141_yukari.jpg',
-    'https://isp.s-angels.com/images/default/thumb/m142_koharu.jpg',
-    'https://isp.s-angels.com/images/default/thumb/m143_alice.jpg',
-    'https://isp.s-angels.com/images/default/thumb/m144_ayaka.jpg',
-    'https://isp.s-angels.com/images/default/thumb/m145_moe.jpg',
-    'https://isp.s-angels.com/images/default/thumb/m146_izumi.jpg',
-    'https://isp.s-angels.com/images/default/thumb/m147_karen.jpg',
-    'https://isp.s-angels.com/images/default/thumb/m148_you.jpg',
-    'https://isp.s-angels.com/images/default/thumb/m149_yuuko.jpg',
-    'https://isp.s-angels.com/images/default/thumb/m150_riko.jpg',
-    'https://isp.s-angels.com/images/default/thumb/m151_erika.jpg',
-    'https://isp.s-angels.com/images/default/thumb/m152_an.jpg',
-    'https://isp.s-angels.com/images/default/thumb/m153_noa.jpg',
-    'https://isp.s-angels.com/images/default/thumb/m154_coco.jpg',
-    'https://isp.s-angels.com/images/default/thumb/m155_tsubasa.jpg',
-    'https://isp.s-angels.com/images/default/thumb/m156_hina.jpg',
-    'https://isp.s-angels.com/images/default/thumb/m157_mina.jpg',
-    'https://isp.s-angels.com/images/default/thumb/m158_shizuku.jpg',
-    'https://isp.s-angels.com/images/default/thumb/m159_masaki.jpg',
-    'https://isp.s-angels.com/images/default/thumb/m160_sayaka.jpg',
-    'https://isp.s-angels.com/images/default/thumb/m161_risa.jpg',
-    'https://isp.s-angels.com/images/default/thumb/m162_you.jpg',
-    'https://isp.s-angels.com/images/default/thumb/m163_chika.jpg',
-    'https://isp.s-angels.com/images/default/thumb/m164_alice.jpg',
-    'https://isp.s-angels.com/images/default/thumb/m165_reon.jpg',
-    'https://isp.s-angels.com/images/default/thumb/m166_nao.jpg',
-    'https://isp.s-angels.com/images/default/thumb/m167_misaki.jpg',
-    'https://isp.s-angels.com/images/default/thumb/m168_riko.jpg',
-    'https://isp.s-angels.com/images/default/thumb/m169_atsuko.jpg',
-    'https://isp.s-angels.com/images/default/thumb/m170_love.jpg',
-    'https://isp.s-angels.com/images/default/thumb/m171_ruri.jpg',
-    'https://isp.s-angels.com/images/default/thumb/m172_megumi.jpg',
-    'https://isp.s-angels.com/images/default/thumb/m173_azusa.jpg',
-    'https://isp.s-angels.com/images/default/thumb/m174_nana.jpg',
-    'https://isp.s-angels.com/images/default/thumb/m175_sayaka.jpg',
-    'https://isp.s-angels.com/images/default/thumb/m176_nanae.jpg',
-    'https://isp.s-angels.com/images/default/thumb/m177_etsuko.jpg',
-    'https://isp.s-angels.com/images/default/thumb/m178_ayumu.jpg',
-    'https://isp.s-angels.com/images/default/thumb/m179_misa.jpg',
-    'https://isp.s-angels.com/images/default/thumb/m180_ai.jpg',
-    'https://isp.s-angels.com/images/default/thumb/m181_rikako.jpg',
-    'https://isp.s-angels.com/images/default/thumb/m182_kaori.jpg',
-    'https://isp.s-angels.com/images/default/thumb/m183_hinano.jpg',
-    'https://isp.s-angels.com/images/default/thumb/m184_tsubasa.jpg',
-    'https://isp.s-angels.com/images/default/thumb/m185_kazuha.jpg',
-    'https://isp.s-angels.com/images/default/thumb/m261_yuuka.jpg',
-    'https://isp.s-angels.com/images/default/thumb/m262_megu.jpg',
-    'https://isp.s-angels.com/images/default/thumb/m263_misuzu.jpg',
-    'https://isp.s-angels.com/images/default/thumb/m264_tsubaki.jpg',
-    'https://isp.s-angels.com/images/default/thumb/m265_yuri.jpg',
-    'https://isp.s-angels.com/images/default/thumb/m266_mio.jpg',
-    'https://isp.s-angels.com/images/default/thumb/m267_ito.jpg',
-    'https://isp.s-angels.com/images/default/thumb/m268_you.jpg',
-    'https://isp.s-angels.com/images/default/thumb/m270_mei.jpg',
-    'https://isp.s-angels.com/images/default/thumb/m271_wakana.jpg',
-    'https://isp.s-angels.com/images/default/thumb/m272_satomi.jpg',
-    'https://isp.s-angels.com/images/default/thumb/m273_yurina.jpg',
-    'https://isp.s-angels.com/images/default/thumb/m275_yuka.jpg',
-    'https://isp.s-angels.com/images/default/thumb/m276_moe.jpg',
-    'https://isp.s-angels.com/images/default/thumb/m277_sara.jpg',
-    'https://isp.s-angels.com/images/default/thumb/m278_ray.jpg',
-    'https://isp.s-angels.com/images/default/thumb/m279_akari.jpg',
-    'https://isp.s-angels.com/images/default/thumb/m514_hitomi.jpg',
-    'https://isp.s-angels.com/images/default/thumb/m515_noria.jpg',
-    'https://isp.s-angels.com/images/default/thumb/m516_rumi.jpg',
-    'https://isp.s-angels.com/images/default/thumb/m517_haruka.jpg',
-    'https://isp.s-angels.com/images/default/thumb/m518_yuuki.jpg',
-    'https://isp.s-angels.com/images/default/thumb/m519_akari.jpg',
-    'https://isp.s-angels.com/images/default/thumb/m520_sayaka.jpg',
-    'https://isp.s-angels.com/images/default/thumb/m521_rena.jpg',
-    'https://isp.s-angels.com/images/default/thumb/m522_mai.jpg',
-    'https://isp.s-angels.com/images/default/thumb/m523_manami.jpg',
-    'https://isp.s-angels.com/images/default/thumb/m524_anna.jpg',
-    'https://isp.s-angels.com/images/default/thumb/m525_shion.jpg',
-    'https://isp.s-angels.com/images/default/thumb/m526_kaho.jpg',
-    'https://isp.s-angels.com/images/default/thumb/m527_mika.jpg',
-    'https://isp.s-angels.com/images/default/thumb/m528_maria.jpg',
-    'https://isp.s-angels.com/images/default/thumb/m529_satomi.jpg',
-    'https://isp.s-angels.com/images/default/thumb/m530_norika.jpg',
-    'https://isp.s-angels.com/images/default/thumb/m531_hiroko.jpg',
-    'https://isp.s-angels.com/images/default/thumb/m532_miho.jpg',
-    'https://isp.s-angels.com/images/default/thumb/m533_yuuri.jpg',
-    'https://isp.s-angels.com/images/default/thumb/m534_miyuu.jpg',
-    'https://isp.s-angels.com/images/default/thumb/m535_ai.jpg',
-    'https://isp.s-angels.com/images/default/thumb/m536_nagisa.jpg',
-    'https://isp.s-angels.com/images/default/thumb/m537_norika.jpg',
-    'https://isp.s-angels.com/images/default/thumb/m538_rieko.jpg',
-    'https://isp.s-angels.com/images/default/thumb/m539_shiho.jpg',
-    'https://isp.s-angels.com/images/default/thumb/m540_saya.jpg',
-    'https://isp.s-angels.com/images/default/thumb/m541_sarina.jpg',
-    'https://isp.s-angels.com/images/default/thumb/m542_suzu.jpg',
-    'https://isp.s-angels.com/images/default/thumb/m543_miku.jpg',
-    'https://isp.s-angels.com/images/default/thumb/m544_shizuka.jpg',
-    'https://isp.s-angels.com/images/default/thumb/m545_mao.jpg',
-    'https://isp.s-angels.com/images/default/thumb/m546_suzu.jpg',
-    'https://isp.s-angels.com/images/default/thumb/m548_sayuki.jpg',
-    'https://isp.s-angels.com/images/default/thumb/m549_mariko.jpg',
-    'https://isp.s-angels.com/images/default/thumb/m550_anri.jpg',
-    'https://isp.s-angels.com/images/default/thumb/m551_yua.jpg',
-    'https://isp.s-angels.com/images/default/thumb/m552_sakura.jpg',
-    'https://isp.s-angels.com/images/default/thumb/m553_reiko.jpg',
-    'https://isp.s-angels.com/images/default/thumb/m554_yui.jpg',
-    'https://isp.s-angels.com/images/default/thumb/m555_kayo.jpg',
-    'https://isp.s-angels.com/images/default/thumb/m556_riria.jpg',
-    'https://isp.s-angels.com/images/default/thumb/m557_riona.jpg',
-    'https://isp.s-angels.com/images/default/thumb/m558_nami.jpg',
-    'https://isp.s-angels.com/images/default/thumb/m559_ayaka.jpg',
-    'https://isp.s-angels.com/images/default/thumb/m560_reika.jpg',
-    'https://isp.s-angels.com/images/default/thumb/m561_yuma.jpg',
-    'https://isp.s-angels.com/images/default/thumb/m562_airu.jpg',
-    'https://isp.s-angels.com/images/default/thumb/m563_rei.jpg',
-    'https://isp.s-angels.com/images/default/thumb/m564_mina.jpg',
-    'https://isp.s-angels.com/images/default/thumb/m565_akira.jpg',
-    'https://isp.s-angels.com/images/default/thumb/m566_kasumi.jpg',
-    'https://isp.s-angels.com/images/default/thumb/m567_yuriko.jpg',
-    'https://isp.s-angels.com/images/default/thumb/m568_reina.jpg',
-    'https://isp.s-angels.com/images/default/thumb/m569_mitsuki.jpg',
-    'https://isp.s-angels.com/images/default/thumb/m570_mami.jpg',
-    'https://isp.s-angels.com/images/default/thumb/m571_akane.jpg',
-    'https://isp.s-angels.com/images/default/thumb/m572_an.jpg',
-    'https://isp.s-angels.com/images/default/thumb/m573_eriko.jpg',
-    'https://isp.s-angels.com/images/default/thumb/m574_runa.jpg',
-    'https://isp.s-angels.com/images/default/thumb/m575_nanami.jpg',
-    'https://isp.s-angels.com/images/default/thumb/m576_nana.jpg',
-    'https://isp.s-angels.com/images/default/thumb/m577_azusa.jpg',
-    'https://isp.s-angels.com/images/default/thumb/m578_aika.jpg',
-    'https://isp.s-angels.com/images/default/thumb/m579_chie.jpg',
-    'https://isp.s-angels.com/images/default/thumb/m580_momo.jpg',
-    'https://isp.s-angels.com/images/default/thumb/m581_sena.jpg',
-    'https://isp.s-angels.com/images/default/thumb/m582_misa.jpg',
-    'https://isp.s-angels.com/images/default/thumb/m583_natsume.jpg',
-    'https://isp.s-angels.com/images/default/thumb/m584_asuka.jpg'
-    )
+girl_img_urls = ()
 
 mm_headers = {
        'accept-encoding': 'gzip, deflate, br', 
@@ -374,8 +167,8 @@ def get_current_weather(keyword, userid):
     '''https://opendata.cwb.gov.tw/api/v1/rest/datastore/F-C0032-001?Authorization=CWB-52F7E175-5DC9-4E41-9D16-6ED798D0C27E
         &locationName=%E5%AE%9C%E8%98%AD%E7%B8%A3,%E8%8A%B1%E8%93%AE%E7%B8%A3&sort=time&timeFrom=2021-11-14T06%3A00%3A00&timeTo=2021-11-14T08%3A00%3A00
     '''
-    print('uid: '+userid)
-    print('keyword:'+keyword) 
+    # print('uid: '+userid)
+    # print('keyword:'+keyword) 
     
     errMsg = u'目前的 {} 無任何資料。'.format(keyword)
     apiNm = 'F-C0032-001'
@@ -449,7 +242,6 @@ def get_current_weather(keyword, userid):
     records = tww['records']
     location = records['location']
     for loc in location:
-        # If the city is found, access its child direct.
         weatherElement = loc['weatherElement']
         for wElm in weatherElement:
             eN = wElm['elementName']
@@ -616,6 +408,15 @@ def get_momo_top30(category,userid):
     #end if
     print('getmomo_top30_push: end')
 
+def load_image_url():
+    _img_urls = ()
+    with open("/app/girl_img_urls.lst", "r") as f:
+        _img_urls.add(f.read())
+    
+    return _img_urls
+
+######################################################
+
 @pysnooper.snoop()
 def get_stock_info(stock_id,userid):
     headers = {'User-Agent': 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) '
@@ -756,10 +557,10 @@ def handle_text_message(event):
     elif text.lower() == 'list' and uid == 'Ube6a1a56c1466ec56cee2ae59ca0b17b':
         
         list = []
-        with open("/app/join_group.txt", "r") as f:
+        with open("/app/human_profile.json", "a") as f:
             list.append(f.read())
             
-        message = TextSendMessage(text='\n'.join(list))
+        message = TextSendMessage(text=''.join(list))
           
     elif text.lower() == 'top30':
         category = category_set[random.randint(0, len(category_set)-1)]
@@ -834,16 +635,6 @@ def handle_content_message(event):
     else:
         return
     
-    # if profile.user_id != 'Ube6a1a56c1466ec56cee2ae59ca0b17b' or profile.user_id != 'U6319002ace8fea14ec4144bbed9628d3':
-    #     message = StickerSendMessage(
-    #         package_id=789,
-    #         sticker_id=10859
-    #     )
-        
-    #     line_bot_api.push_message(profile.user_id,message)
-    
-    #     return
-    
     message = TextSendMessage(
         text=('こんにちは ['+profile.display_name+'] はじめまして.'),
         sender=Sender(
@@ -864,11 +655,10 @@ def handle_follow(event):
 
     profile = line_bot_api.get_profile(event.source.user_id)
     
-    with open("/app/join_group.txt", "a") as f:
-        f.write('{} app[web.1]: uid: {}\n'.format(datetime.strptime(datetime.datetime.now(), "%Y-%b-%dT%H:%M:%S"), profile.user_id))
-        f.write('{} app[web.1]: name:{}\n'.format(datetime.strptime(datetime.datetime.now(), "%d-%b-%YT%H:%M:%S"), profile.display_name))
-        f.write('{} app[web.1]: following..\n\n'.format(datetime.strptime(datetime.datetime.now(), "%d-%b-%Y-%H:%M:%S")))
-    
+    with open("/app/human_profile.json", "a") as f:
+        f.write('{} app[web.1]: follow:\n'.format(datetime.strptime(datetime.datetime.now(), "%d-%b-%Y-%H:%M:%S")))
+        f.write('\t\tprofile: {}\n\n'.format(json.dumps(profile, indent=2)))    
+
     line_bot_api.reply_message(
         event.reply_token, TextSendMessage(text='welecome {} follow me.').format(profile.display_name))
 
@@ -882,10 +672,9 @@ def handle_join(event):
 
     profile = line_bot_api.get_profile(event.source.user_id)
     
-    with open("/app/join_group.txt", "a") as f:
-        f.write('{} app[web.1]: uid: {}\n'.format(datetime.strptime(datetime.datetime.now(), "%Y-%b-%dT%H:%M:%S"), profile.user_id))
-        f.write('{} app[web.1]: name:{}\n'.format(datetime.strptime(datetime.datetime.now(), "%d-%b-%YT%H:%M:%S"), profile.display_name))
-        f.write('{} app[web.1]: join.\n\n'.format(datetime.strptime(datetime.datetime.now(), "%d-%b-%Y-%H:%M:%S")))
+    with open("/app/human_profile.json", "a") as f:
+        f.write('{} app[web.1]: join:\n'.format(datetime.strptime(datetime.datetime.now(), "%d-%b-%Y-%H:%M:%S")))
+        f.write('\t\tprofile: {}\n\n'.format(json.dumps(profile, indent=2)))
     
     line_bot_api.reply_message(
         event.reply_token, TextSendMessage(text='welecome {},Joined this {}.').format(profile.display_name, event.source.type))
@@ -896,5 +685,7 @@ def handle_leave(event):
 
 
 if __name__ == '__main__':
+
+    girl_img_urls = load_image_url()
 
     app.run(debug=True)
