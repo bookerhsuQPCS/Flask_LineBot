@@ -13,6 +13,7 @@ from bs4 import BeautifulSoup
 from flask import Flask, request, abort
 from concurrent.futures import ThreadPoolExecutor
 import sys, os
+import pathlib
 
 from linebot import (
     LineBotApi, WebhookHandler
@@ -134,13 +135,14 @@ headers = {
         'User-Agent': 'Mozilla/5.0 (Macintosh; Intel Mac OS X 10_10_1) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/39.0.2171.95 Safari/537.36'
     }
 
-#logging.basicConfig(filename='app.log', encoding='utf-8', format='%(asctime)s %(message)s', datefmt='%m/%d/%Y %I:%M:%S %p', level=logging.INFO)
-
+print(pathlib.Path().resolve())
 
 #test code    
-with open(os.path.join(sys.path[0], "join_group.txt"), "r") as f:
+with open(os.path.join(sys.path[0], "../join_group.txt"), "r") as f:
     print(f.read())
 
+with open(os.path.join(sys.path[0], "../../join_group.txt"), "r") as f:
+    print(f.read())
 
 # my background thread
 class MyPePe():
@@ -592,14 +594,6 @@ def handle_text_message(event):
 #                package_id=11539,
 #                sticker_id=52114112
 #            )
-    # elif text.lower() == 'icon':
-    #     message = TextSendMessage(
-    #         text='變耕圖士尋錫。',
-    #         sender=Sender(
-    #         name="message",
-    #             icon_url="https://thumbs2.imgbox.com/ac/1b/UEL3GP3P_t.png"
-    #         )
-    #     )
     else:
         ### 圖片
         message = ImageMessage(
