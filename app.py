@@ -6,7 +6,7 @@ Created on Sat Nov 18 21:00:17 21
 @author: bookerhsu
 """
 
-import requests, re, feedparser, random, time
+import requests, re, feedparser, random, time, os
 import json, datetime, pysnooper, threading
 import requests.packages.urllib3
 from bs4 import BeautifulSoup
@@ -41,10 +41,10 @@ from linebot.models import (
 app = Flask(__name__)
 
 # 必須放上自己的Channel Access Token
-line_bot_api = LineBotApi('cXtIw9d8+oQbrXZ/3hEBocCNTpsroaNVWid2LiVlekEa8jnhW2CnKAKqfXvhWPUFGaLa81z7sYmUtCy+C5pXyYTW5ePpp+fRB8SbdwgoIPHwoQgNejTUnD4J+VTw4jUJ4DoZtkPR0NGwKBpUcslbmQdB04t89/1O/w1cDnyilFU=')
+line_bot_api = LineBotApi(os.environ['CHANNEL_ACCESS_TOKEN'])
 
 # 必須放上自己的Channel Secret
-handler = WebhookHandler('7e27ba98cfbaa7d09bef1435b55deb5f')
+handler = WebhookHandler(os.environ['CHANNEL_SECRET'])
 
 is_buy = False
 
@@ -672,7 +672,7 @@ def handle_follow(event):
 
 
 @handler.add(UnfollowEvent)
-def handle_unfollow():
+def handle_unfollow(event):
     app.logger.info("Got Unfollow")
 
 @handler.add(JoinEvent)
@@ -690,7 +690,7 @@ def handle_join(event):
         event.reply_token, TextSendMessage(text='welecome {},Joined this {}.').format(profile.display_name, event.source.type))
     
 @handler.add(LeaveEvent)
-def handle_leave():
+def handle_leave(event):
     app.logger.info("Got leave")
 
 
