@@ -12,8 +12,7 @@ import requests.packages.urllib3
 from bs4 import BeautifulSoup
 from flask import Flask, request, abort
 from concurrent.futures import ThreadPoolExecutor
-import sys, os
-import pathlib
+import sys, os, pathlib
 
 from linebot import (
     LineBotApi, WebhookHandler
@@ -135,13 +134,9 @@ headers = {
         'User-Agent': 'Mozilla/5.0 (Macintosh; Intel Mac OS X 10_10_1) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/39.0.2171.95 Safari/537.36'
     }
 
-print(pathlib.Path().resolve())
 
 #test code    
-with open(os.path.join(sys.path[0], "../join_group.txt"), "r") as f:
-    print(f.read())
-
-with open(os.path.join(sys.path[0], "../../join_group.txt"), "r") as f:
+with open('os.path.join(pathlib.Path().resolve(), "/join_group.txt"), "r") as f:
     print(f.read())
 
 # my background thread
