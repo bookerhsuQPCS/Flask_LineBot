@@ -414,7 +414,6 @@ def load_image_url():
 
     with open("/app/girl_img_urls.lst", "r") as f:
         _img_urls.append(f.read())
-        print('>>>>>'+_img_urls[len(girl_img_urls)-1])
    
     return _img_urls
 
@@ -481,7 +480,6 @@ def handle_text_message(event):
     print('uid: {}'.format(uid))
     print('name:{}'.format(nameid))
     print('keyword:{}'.format(text))
-    print(profile)
 
     # 買東西
     if text == '試試' or text.lower() == 'help':
@@ -592,6 +590,7 @@ def handle_text_message(event):
             girl_img_urls = load_image_url()
         
         img_url = girl_img_urls[random.randint(0, len(girl_img_urls)-1)]
+        print(img_url)
          
         message = ImageSendMessage(
             original_content_url=img_url,
@@ -693,7 +692,5 @@ def handle_leave(event):
 
 
 if __name__ == '__main__':
-
-    girl_img_urls = load_image_url()
 
     app.run(debug=True)
