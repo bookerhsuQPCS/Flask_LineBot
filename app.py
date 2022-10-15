@@ -12,6 +12,7 @@ import requests.packages.urllib3
 from bs4 import BeautifulSoup
 from flask import Flask, request, abort
 from concurrent.futures import ThreadPoolExecutor
+import sys, os
 
 from linebot import (
     LineBotApi, WebhookHandler
@@ -591,14 +592,14 @@ def handle_text_message(event):
 #                package_id=11539,
 #                sticker_id=52114112
 #            )
-    elif text.lower() == 'icon':
-        message = TextSendMessage(
-            text='變耕圖士尋錫。',
-            sender=Sender(
-            name="貓咪票票",
-                icon_url="https://thumbs2.imgbox.com/ac/1b/UEL3GP3P_t.png"
-            )
-        )
+    # elif text.lower() == 'icon':
+    #     message = TextSendMessage(
+    #         text='變耕圖士尋錫。',
+    #         sender=Sender(
+    #         name="message",
+    #             icon_url="https://thumbs2.imgbox.com/ac/1b/UEL3GP3P_t.png"
+    #         )
+    #     )
     else:
         ### 圖片
         message = ImageMessage(
@@ -680,4 +681,8 @@ def handle_leave():
 
 
 if __name__ == '__main__':
+    
+    with open(os.path.join(sys.path[0], "join_group.txt"), "r") as f:
+        print(f.read())
+    
     app.run(debug=True)
