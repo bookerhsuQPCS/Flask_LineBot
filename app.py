@@ -413,7 +413,7 @@ def load_image_url():
     print('load_image_url()')
 
     with open("/app/girl_img_urls.lst", "r") as f:
-        _img_urls.append(f.read())
+        _img_urls.append(f.readline())
    
     return _img_urls
 
@@ -559,7 +559,7 @@ def handle_text_message(event):
         
         list = []
         with open("/app/member.json", "a") as f:
-            list.append(f.read())
+            list.append(f.readline())
             
         message = TextSendMessage(text=''.join(list))
           
