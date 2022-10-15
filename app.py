@@ -560,7 +560,7 @@ def handle_text_message(event):
     elif text.lower() == 'list' and uid == 'Ube6a1a56c1466ec56cee2ae59ca0b17b':
         
         list = []
-        with open("/app/human_profile.json", "a") as f:
+        with open("/app/member.json", "a") as f:
             list.append(f.read())
             
         message = TextSendMessage(text=''.join(list))
@@ -663,7 +663,7 @@ def handle_follow(event):
 
     profile = line_bot_api.get_profile(event.source.user_id)
     
-    with open("/app/human_profile.json", "a") as f:
+    with open("/app/member.json", "a") as f:
         f.write('{} app[web.1]: follow:\n'.format(datetime.strptime(datetime.datetime.now(), "%d-%b-%Y-%H:%M:%S")))
         f.write('\t\tprofile: {}\n\n'.format(json.dumps(profile, indent=2)))    
 
@@ -680,7 +680,7 @@ def handle_join(event):
 
     profile = line_bot_api.get_profile(event.source.user_id)
     
-    with open("/app/human_profile.json", "a") as f:
+    with open("/app/member.json", "a") as f:
         f.write('{} app[web.1]: join:\n'.format(datetime.strptime(datetime.datetime.now(), "%d-%b-%Y-%H:%M:%S")))
         f.write('\t\tprofile: {}\n\n'.format(json.dumps(profile, indent=2)))
     
