@@ -590,7 +590,7 @@ def handle_text_message(event):
             girl_img_urls = load_image_url()
         
         img_url = girl_img_urls[random.randint(0, len(girl_img_urls)-1)]
-        print('img_url :{}'.format(img_url))
+        print('img_url :>{}<'.format(img_url))
          
         message = ImageSendMessage(
             original_content_url=img_url,
