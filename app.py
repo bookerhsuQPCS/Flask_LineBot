@@ -559,11 +559,11 @@ def handle_text_message(event):
         
     elif text.lower() == 'list' and uid == 'Ube6a1a56c1466ec56cee2ae59ca0b17b':
         
-        list = []
+        list = ''
         with open("/app/member.json", "r") as f:
-            list.append(f.readline())
+            list.append(f.read())
             
-        message = TextSendMessage(text=''.join(list))
+        message = TextSendMessage(text=list)
           
     elif text.lower() == 'top30':
         category = category_set[random.randint(0, len(category_set)-1)]
