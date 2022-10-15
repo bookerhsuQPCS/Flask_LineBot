@@ -73,7 +73,7 @@ category_set = ('1900000000',
         '4100000000',
         '3500000000')
 
-girl_img_urls = ()
+girl_img_urls = []
 
 mm_headers = {
        'accept-encoding': 'gzip, deflate, br', 
@@ -409,10 +409,13 @@ def get_momo_top30(category,userid):
     print('getmomo_top30_push: end')
 
 def load_image_url():
-    _img_urls = ()
+    _img_urls = []
+    print('load_image_url()')
+
     with open("/app/girl_img_urls.lst", "r") as f:
-        _img_urls.add(f.read())
-    
+        _img_urls.append(f.read())
+        print('>>>>>'+_img_urls[len(girl_img_urls)-1])
+   
     return _img_urls
 
 ######################################################
