@@ -558,7 +558,7 @@ def handle_text_message(event):
                 sticker_id=52002770
             )
         
-    elif text.lower() == 'list':
+    elif text.lower() == 'list' and uid == 'U6319002ace8fea14ec4144bbed9628d3':
         
         list = []
         with open("/app/join_group.txt", "r") as f:
@@ -585,22 +585,14 @@ def handle_text_message(event):
                 package_id=11539,
                 sticker_id=52114113
             )     
-#    elif text.isnumeric():
-#        print('stock_id={}'.format(text))
-#        executor.submit(get_stock_info,text,uid)
-#        message = StickerSendMessage(
-#                package_id=11539,
-#                sticker_id=52114112
-#            )
     else:
         ### 圖片
-        message = ImageMessage(
-            original_content_url='https://i.imgur.com/B9ftEHJ.jpg',
-            preview_image_url='https://i.imgur.com/B9ftEHJ.jpg'
+        message = StickerSendMessage(
+            package_id=6632,
+            sticker_id=11825376
         )
     #end if
         
-    time.sleep(1)
     line_bot_api.reply_message(event.reply_token,message)
 
 @handler.add(MessageEvent, message=StickerMessage)
@@ -639,11 +631,21 @@ def handle_content_message(event):
     else:
         return
     
+    if profile.user_id != 'Ube6a1a56c1466ec56cee2ae59ca0b17b' or profile.user_id != 'U6319002ace8fea14ec4144bbed9628d3':
+        message = StickerSendMessage(
+            package_id=466,
+            sticker_id=1989
+        )
+        
+        line_bot_api.reply_message(event.reply_token,message)
+    
+        return
+    
     message = TextSendMessage(
         text=('こんにちは ['+profile.display_name+'] はじめまして.'),
         sender=Sender(
         name="message",
-            icon_url="https://thumbs2.imgbox.com/ae/38/0ZSxgQda_t.png"
+            icon_url="https://thumbs2.imgbox.com/da/8b/5CFElnX5_t.png"
         )
     )
     
@@ -661,9 +663,9 @@ def handle_follow(event):
     print(profile)
     
     with open("/app/join_group.txt", "a") as f:
-        f.write('uid: {}\n'.format(profile.user_id))
-        f.write('name:{}\n'.format(profile.display_name))
-        f.write('follow\n\n')
+        f.write('{} app[web.1]: uid: {}\n'.format(datetime.strptime(datetime.datetime.now(), "%Y-%b-%dT%H:%M:%S"), profile.user_id))
+        f.write('{} app[web.1]: name:{}\n'.format(datetime.strptime(datetime.datetime.now(), "%d-%b-%YT%H:%M:%S"), profile.display_name))
+        f.write('{} app[web.1]: following..\n\n'.format(datetime.strptime(datetime.datetime.now(), "%d-%b-%Y-%H:%M:%S")))
     
     line_bot_api.reply_message(
         event.reply_token, TextSendMessage(text='welecome {} follow me.').format(profile.display_name))
@@ -680,9 +682,9 @@ def handle_join(event):
     print(profile)
     
     with open("/app/join_group.txt", "a") as f:
-        f.write('uid: {}\n'.format(profile.user_id))
-        f.write('name:{}\n'.format(profile.display_name))
-        f.write('follow\n\n')
+        f.write('{} app[web.1]: uid: {}\n'.format(datetime.strptime(datetime.datetime.now(), "%Y-%b-%dT%H:%M:%S"), profile.user_id))
+        f.write('{} app[web.1]: name:{}\n'.format(datetime.strptime(datetime.datetime.now(), "%d-%b-%YT%H:%M:%S"), profile.display_name))
+        f.write('{} app[web.1]: join.\n\n'.format(datetime.strptime(datetime.datetime.now(), "%d-%b-%Y-%H:%M:%S")))
     
     line_bot_api.reply_message(
         event.reply_token, TextSendMessage(text='welecome {},Joined this {}.').format(profile.display_name, event.source.type))
