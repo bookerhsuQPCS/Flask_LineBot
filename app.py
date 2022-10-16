@@ -78,6 +78,8 @@ category_set = ('1900000000',
 
 girl_img_urls = []
 
+members = []
+
 mm_headers = {
        'accept-encoding': 'gzip, deflate, br', 
        'accept-language': 'zh-TW,zh;q=0.9,en-US;q=0.8,en;q=0.7', 
@@ -420,6 +422,26 @@ def load_image_url():
     
     return _img_urls
 
+def copy_profile_to(profile):
+    
+    global members
+    if len(members) == 0:
+        with open("/app/member.json") as f:
+            members = json.load(f);
+        
+    _profile = None
+    for p in members:
+      if p.userId == profile.userId:
+          _profile = dict(p)
+          members.append(_profile)
+    
+    if _profile is None:
+        _profile = dict(profile)
+        _profile["last_time"] = datetime.strptime(datetime.datetime.now(), "%d-%b-%Y-%H:%M:%S")
+  
+    with open("/app/member.json", 'w') as f:
+        json.dump(members, f)
+
 ######################################################
 
 @pysnooper.snoop()
@@ -484,6 +506,8 @@ def handle_text_message(event):
     print('uid: {}'.format(uid))
     print('name:{}'.format(nameid))
     print('keyword:{}'.format(text))
+    
+    copy_profile_to(profile)
 
     # 買東西
     if text == '試試' or text.lower() == 'help':
@@ -634,6 +658,7 @@ def handle_location_message(event):
 def handle_content_message(event):
     
     profile = line_bot_api.get_profile(event.source.user_id)
+    copy_profile_to(profile)
     ext = ''
     
     if isinstance(event.message, ImageMessage):
@@ -664,20 +689,11 @@ def handle_file_message(event):
 def handle_follow(event):
 
     profile = line_bot_api.get_profile(event.source.user_id)
-    
-    members = []
-    with open("/app/member.json") as f:
-        members = json.load(f);
-        
-    _profile = {}
-    _profile["displayName"] = profile.displayName
-    _profile["language"] = profile.language
-    _profile["statusMessage"] = profile.statusMessage
-    _profile["userId"] = profile.userId
+    _profile = dict(profile)
     _profile["timestamp"] = datetime.strptime(datetime.datetime.now(), "%d-%b-%Y-%H:%M:%S")
     _profile["action"] = "Follow"
     members.append(_profile)
-  
+    
     with open("/app/member.json", 'w') as f:
         json.dump(members, f)
 
@@ -693,16 +709,7 @@ def handle_unfollow(event):
 def handle_join(event):
 
     profile = line_bot_api.get_profile(event.source.user_id)
-
-    members = []
-    with open("/app/member.json") as f:
-        members = json.load(f);
-        
-    _profile = {}
-    _profile["displayName"] = profile.displayName
-    _profile["language"] = profile.language
-    _profile["statusMessage"] = profile.statusMessage
-    _profile["userId"] = profile.userId
+    _profile = dict(profile)
     _profile["timestamp"] = datetime.strptime(datetime.datetime.now(), "%d-%b-%Y-%H:%M:%S")
     _profile["action"] = "Join"
     members.append(_profile)
