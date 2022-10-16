@@ -432,13 +432,13 @@ def copy_profile_to(profile):
     _profile = None
     for p in members:
         print(p)
-        if p["userId"] == profile["userId"]:
+        if p["userId"] == profile.user_id:
             _profile = dict(p)
             members.append(_profile)
     
     if _profile is None:
         _profile = dict(profile)
-        _profile["last_time"] = datetime.strptime(datetime.datetime.now(), "%d-%b-%Y-%H:%M:%S")
+        _profile["lastTime"] = datetime.strptime(datetime.datetime.now(), "%d-%b-%Y-%H:%M:%S")
   
     with open("/app/member.json", 'w') as f:
         json.dump(members, f)
