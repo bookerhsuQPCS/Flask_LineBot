@@ -47,7 +47,7 @@ line_bot_api = LineBotApi(os.environ['CHANNEL_ACCESS_TOKEN'])
 handler = WebhookHandler(os.environ['CHANNEL_SECRET'])
 
 # 必須放上自己的Channel Secret
-adm_uid = 'Ube6a1a56c1466ec56cee2ae59ca0b17b' #WebhookHandler(os.environ['ADMIN_UISER_ID'])
+adm_uid = WebhookHandler(os.environ['ADMIN_UISER_ID'])
 
 is_buy = False
 
@@ -470,7 +470,7 @@ def callback():
     except InvalidSignatureError:
         print('InvalidSignatureError')
         abort(400)
-    # return 'OK'
+    return 'OK'
   
 #訊息傳遞區塊
 @handler.add(MessageEvent, message=TextMessage)
