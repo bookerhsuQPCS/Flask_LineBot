@@ -431,9 +431,10 @@ def copy_profile_to(profile):
         
     _profile = None
     for p in members:
-      if p.userId == profile.userId:
-          _profile = dict(p)
-          members.append(_profile)
+        print(json.dump(p))
+        if p.userId == profile.userId:
+            _profile = dict(p)
+            members.append(_profile)
     
     if _profile is None:
         _profile = dict(profile)
