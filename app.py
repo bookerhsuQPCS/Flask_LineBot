@@ -46,6 +46,9 @@ line_bot_api = LineBotApi(os.environ['CHANNEL_ACCESS_TOKEN'])
 # 必須放上自己的Channel Secret
 handler = WebhookHandler(os.environ['CHANNEL_SECRET'])
 
+# 必須放上自己的Channel Secret
+adm_uid = WebhookHandler(os.environ['ADMIN_UISER_ID'])
+
 is_buy = False
 
 #category
@@ -555,7 +558,7 @@ def handle_text_message(event):
                 sticker_id=52002770
             )
         
-    elif text.lower() == 'list' and uid == 'Ube6a1a56c1466ec56cee2ae59ca0b17b':
+    elif text.lower() == 'list' and uid == adm_uid:
         
         content = []
         with open('/app/member.json') as f:
