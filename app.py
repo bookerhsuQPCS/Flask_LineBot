@@ -432,7 +432,7 @@ def copy_profile_to(profile):
     _profile = None
     for p in members:
         print(p)
-        if p["userId"] == profile.userId:
+        if p["userId"] == profile["userId"]:
             _profile = dict(p)
             members.append(_profile)
     
