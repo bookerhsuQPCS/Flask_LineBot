@@ -469,7 +469,7 @@ def callback():
         handler.handle(body, signature)
     except InvalidSignatureError:
         abort(400)
-    return 'OK'
+    # return 'OK'
   
 #訊息傳遞區塊
 @handler.add(MessageEvent, message=TextMessage)
