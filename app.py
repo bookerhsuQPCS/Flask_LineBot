@@ -421,12 +421,14 @@ def load_image_url():
     
     return _img_urls
 
-def send_profile_to(profi):
+def send_profile_to(prof):
     
-    if adm_uid != profi.user_id:
-        _prof = profi.__dict__
-        _prof["lastTime"] = datetime.datetime.now().strftime("%d-%b-%Y-%H:%M:%S")
-        message = TextSendMessage(text='from line bot, ' + str(_prof))
+    if adm_uid != prof.user_id:
+        ss = 'uid:['+prof.user_id+']\n'
+        +'name:['+prof.display_name+']\n'
+        +'AccessTime:['+datetime.datetime.now().strftime("%d-%b-%Y-%H:%M:%S")+']'
+
+        message = TextSendMessage(text='from line bot\n' + ss)
         line_bot_api.push_message(adm_uid, message)
 
 ######################################################
@@ -701,11 +703,12 @@ def handle_file_message(event):
 def handle_follow(event):
 
     profile = line_bot_api.get_profile(event.source.user_id)
-    _profi = profile.__dict__
-    _profi["timestamp"] = datetime.datetime.now().strftime("%d-%b-%Y-%H:%M:%S")
-    _profi["action"] = "Follow"
+    ss = 'uid:['+profile.user_id+']\n'
+    +'name:['+profile.display_name+']\n'
+    +'FollowTime:['+datetime.datetime.now().strftime("%d-%b-%Y-%H:%M:%S")+']\n'
+    +'Action:[Follow]'
     
-    message = TextSendMessage(text='from line bot, ' + str(_profi))
+    message = TextSendMessage(text='from line bot\n' + ss)
     line_bot_api.push_message(adm_uid, message)
 
     line_bot_api.reply_message(
@@ -719,11 +722,12 @@ def handle_unfollow(event):
 def handle_join(event):
 
     profile = line_bot_api.get_profile(event.source.user_id)
-    _profi = profile.__dict__
-    _profi["timestamp"] = datetime.datetime.now().strftime("%d-%b-%Y-%H:%M:%S")
-    _profi["action"] = "Join"
+    ss = 'uid:['+profile.user_id+']\n'
+    +'name:['+profile.display_name+']\n'
+    +'JoinTime:['+datetime.datetime.now().strftime("%d-%b-%Y-%H:%M:%S")+']\n'
+    +'Action:[Join]'
     
-    message = TextSendMessage(text='from line bot, ' + str(_profi))
+    message = TextSendMessage(text='from line bot\n' + ss)
     line_bot_api.push_message(adm_uid, message)
     
     line_bot_api.reply_message(
