@@ -424,7 +424,7 @@ def load_image_url():
 def send_profile_to(profi):
     
     if adm_uid != profi.user_id:
-        _prof = profi.dict()
+        _prof = profi.__dict__
         _prof["lastTime"] = datetime.strptime(datetime.datetime.now(), "%d-%b-%Y-%H:%M:%S")
         message = TextSendMessage(text='from line bot, ' + str(_prof))
         line_bot_api.push_message(adm_uid, message)
@@ -701,7 +701,7 @@ def handle_file_message(event):
 def handle_follow(event):
 
     profile = line_bot_api.get_profile(event.source.user_id)
-    _profi = profile.dict()
+    _profi = profile.__dict__
     _profi["timestamp"] = datetime.strptime(datetime.datetime.now(), "%d-%b-%Y-%H:%M:%S")
     _profi["action"] = "Follow"
     
@@ -719,7 +719,7 @@ def handle_unfollow(event):
 def handle_join(event):
 
     profile = line_bot_api.get_profile(event.source.user_id)
-    _profi = profile.dict()
+    _profi = profile.__dict__
     _profi["timestamp"] = datetime.strptime(datetime.datetime.now(), "%d-%b-%Y-%H:%M:%S")
     _profi["action"] = "Join"
     
