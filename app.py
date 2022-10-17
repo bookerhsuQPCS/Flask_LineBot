@@ -428,12 +428,13 @@ def send_profile_to(prof):
             sts = 'uid:['+prof.user_id+']\n'
             +'name:['+prof.display_name.decode('unicode_escape')+']\n'
             +'AccessTime:['+datetime.datetime.now().strftime("%Y-%m-%dT%H:%M:%S")+']'
+            print(sts)
     
             message = TextSendMessage(text=('from line bot\n' + sts))
             line_bot_api.push_message(adm_uid, message)
             
         except TypeError as er:
-            print('TypeError:' + er)
+            print(er)
 
 ######################################################
 
