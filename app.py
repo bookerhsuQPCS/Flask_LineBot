@@ -425,7 +425,7 @@ def send_profile_to(prof):
     
     if adm_uid != prof.user_id:
         ss = 'uid:['+prof.user_id+']\n'
-        +'name:['+prof.display_name+']\n'
+        # +'name:['+prof.display_name+']\n'
         +'AccessTime:['+datetime.datetime.now().strftime("%d-%b-%Y-%H:%M:%S")+']'
 
         message = TextSendMessage(text='from line bot\n' + ss)
@@ -704,7 +704,7 @@ def handle_follow(event):
 
     profile = line_bot_api.get_profile(event.source.user_id)
     ss = 'uid:['+profile.user_id+']\n'
-    +'name:['+profile.display_name+']\n'
+    # +'name:['+profile.display_name+']\n'
     +'FollowTime:['+datetime.datetime.now().strftime("%d-%b-%Y-%H:%M:%S")+']\n'
     +'Action:[Follow]'
     
@@ -723,7 +723,7 @@ def handle_join(event):
 
     profile = line_bot_api.get_profile(event.source.user_id)
     ss = 'uid:['+profile.user_id+']\n'
-    +'name:['+profile.display_name+']\n'
+    # +'name:['+profile.display_name+']\n'
     +'JoinTime:['+datetime.datetime.now().strftime("%d-%b-%Y-%H:%M:%S")+']\n'
     +'Action:[Join]'
     
