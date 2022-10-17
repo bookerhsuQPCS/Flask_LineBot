@@ -79,8 +79,6 @@ category_set = ('1900000000',
 
 girl_img_urls = []
 
-members = []
-
 mm_headers = {
        'accept-encoding': 'gzip, deflate, br', 
        'accept-language': 'zh-TW,zh;q=0.9,en-US;q=0.8,en;q=0.7', 
@@ -423,27 +421,13 @@ def load_image_url():
     
     return _img_urls
 
-def copy_profile_to(profile):
+def send_profile_to(profile):
     
-    global members
-    if len(members) == 0:
-        with open("/app/member.json") as f:
-            members = json.load(f);
-        
-    _profile = None
-    for p in members:
-        if p["userId"] == profile.user_id:
-            _profile = dict(p)
-            break
-    
-    if _profile is None:
+    if adm_uid != profile.user_id:
         _profile = dict(profile)
         _profile["lastTime"] = datetime.strptime(datetime.datetime.now(), "%d-%b-%Y-%H:%M:%S")
-        members.append(_profile)
-        print(members)
-  
-    with open("/app/member.json", 'w') as f:
-        json.dump(members, f)
+        message = TextSendMessage(text='from line bot, ' + str(_profile))
+        line_bot_api.push_message(adm_uid, message)
 
 ######################################################
 
@@ -510,7 +494,7 @@ def handle_text_message(event):
     print('name:{}'.format(nameid))
     print('keyword:{}'.format(text))
     
-    copy_profile_to(profile)
+    send_profile_to(profile)
 
     # 買東西
     if text == '試試' or text.lower() == 'help':
@@ -585,10 +569,6 @@ def handle_text_message(event):
                 package_id=11537,
                 sticker_id=52002770
             )
-        
-    elif text.lower() == 'list' and uid == adm_uid:
-            
-        message = TextSendMessage(text=str(members))
           
     elif text.lower() == 'top30':
         category = category_set[random.randint(0, len(category_set)-1)]
@@ -690,7 +670,7 @@ def handle_location_message(event):
 def handle_content_message(event):
     
     profile = line_bot_api.get_profile(event.source.user_id)
-    copy_profile_to(profile)
+    send_profile_to(profile)
     ext = ''
     
     if isinstance(event.message, ImageMessage):
@@ -724,14 +704,12 @@ def handle_follow(event):
     _profile = dict(profile)
     _profile["timestamp"] = datetime.strptime(datetime.datetime.now(), "%d-%b-%Y-%H:%M:%S")
     _profile["action"] = "Follow"
-    members.append(_profile)
     
-    with open("/app/member.json", 'w') as f:
-        json.dump(members, f)
+    message = TextSendMessage(text='from line bot, ' + str(_profile))
+    line_bot_api.push_message(adm_uid, message)
 
     line_bot_api.reply_message(
         event.reply_token, TextSendMessage(text='welecome {} follow me.').format(profile.display_name))
-
 
 @handler.add(UnfollowEvent)
 def handle_unfollow(event):
@@ -744,10 +722,9 @@ def handle_join(event):
     _profile = dict(profile)
     _profile["timestamp"] = datetime.strptime(datetime.datetime.now(), "%d-%b-%Y-%H:%M:%S")
     _profile["action"] = "Join"
-    members.append(_profile)
-  
-    with open("/app/member.json", 'w') as f:
-        json.dump(members, f)
+    
+    message = TextSendMessage(text='from line bot, ' + str(_profile))
+    line_bot_api.push_message(adm_uid, message)
     
     line_bot_api.reply_message(
         event.reply_token, TextSendMessage(text='welecome {},Joined this {}.').format(profile.display_name, event.source.type))
