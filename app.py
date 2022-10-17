@@ -423,6 +423,8 @@ def load_image_url():
 
 def send_profile_to(prof):
     
+    print(adm_uid)
+    print(prof.user_id)
     if adm_uid != prof.user_id:
         try:
             sts = 'uid:['+prof.user_id+']\n'
