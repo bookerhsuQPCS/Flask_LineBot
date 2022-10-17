@@ -432,8 +432,8 @@ def send_profile_to(prof):
             message = TextSendMessage(text=('from line bot\n' + sts))
             line_bot_api.push_message(adm_uid, message)
             
-        except TypeError:
-            print('TypeError')
+        except TypeError as er:
+            print('TypeError:' + er)
 
 ######################################################
 
