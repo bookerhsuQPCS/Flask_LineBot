@@ -427,9 +427,9 @@ def send_profile_to(prof):
     print(prof.user_id)
     if adm_uid != prof.user_id:
         try:
-            sts = 'uid:['+prof.user_id+']\n' \
+            sts = ('uid:['+prof.user_id+']\n' \
             +'name:['+prof.display_name+']\n' \
-            +'AccessTime:['+datetime.datetime.now().strftime("%Y-%m-%dT%H:%M:%S")+']'
+            +'AccessTime:['+datetime.datetime.now().strftime("%Y-%m-%dT%H:%M:%S")+']')
             print(sts)
     
             message = TextSendMessage(text=('from line bot\n' + sts))
@@ -710,9 +710,9 @@ def handle_file_message(event):
 def handle_follow(event):
 
     profile = line_bot_api.get_profile(event.source.user_id)
-    ss = 'uid:['+profile.user_id+']\n' \
+    ss = ('uid:['+profile.user_id+']\n' \
     +'name:['+profile.display_name+']\n' \
-    +'FollowTime:['+datetime.datetime.now().strftime("%Y-%m-%dT%H:%M:%S")+']'
+    +'FollowTime:['+datetime.datetime.now().strftime("%Y-%m-%dT%H:%M:%S")+']')
     
     message = TextSendMessage(text='from line bot\n' + ss)
     line_bot_api.push_message(adm_uid, message)
@@ -728,9 +728,9 @@ def handle_unfollow(event):
 def handle_join(event):
 
     profile = line_bot_api.get_profile(event.source.user_id)
-    ss = 'uid:['+profile.user_id+']\n' \
+    ss = ('uid:['+profile.user_id+']\n' \
     +'name:['+profile.display_name+']\n' \
-    +'JoinTime:['+datetime.datetime.now().strftime("%Y-%m-%dT%H:%M:%S")+']'
+    +'JoinTime:['+datetime.datetime.now().strftime("%Y-%m-%dT%H:%M:%S")+']')
     
     message = TextSendMessage(text='from line bot\n' + ss)
     line_bot_api.push_message(adm_uid, message)
