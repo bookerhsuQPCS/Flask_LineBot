@@ -22,13 +22,14 @@ from linebot.exceptions import (
 )
 
 from linebot.models import (
-    MessageEvent, TextMessage, TextSendMessage, ImageSendMessage,
+    MessageEvent, TextMessage, TextSendMessage, ImageSendMessage, ImagemapSendMessage,
     SourceUser, SourceGroup, SourceRoom, Sender,
     TemplateSendMessage, ConfirmTemplate, MessageAction,
     ButtonsTemplate, ImageCarouselTemplate, ImageCarouselColumn, URIAction,
     PostbackAction, DatetimePickerAction,
     URITemplateAction, MessageTemplateAction, PostbackTemplateAction,
-    CameraAction, CameraRollAction, LocationAction,
+    CameraAction, CameraRollAction, LocationAction, MessageImagemapAction,
+    URIImagemapAction, ImagemapArea, BaseSize, Video, ExternalLink,
     CarouselTemplate, CarouselColumn, PostbackEvent,
     StickerMessage, StickerSendMessage, LocationMessage, LocationSendMessage,
     ImageMessage, VideoMessage, AudioMessage, FileMessage,
@@ -433,11 +434,13 @@ def copy_profile_to(profile):
     for p in members:
         if p["userId"] == profile.user_id:
             _profile = dict(p)
+            break
     
     if _profile is None:
         _profile = dict(profile)
         _profile["lastTime"] = datetime.strptime(datetime.datetime.now(), "%d-%b-%Y-%H:%M:%S")
         members.append(_profile)
+        print(members)
   
     with open("/app/member.json", 'w') as f:
         json.dump(members, f)
@@ -618,6 +621,39 @@ def handle_text_message(event):
         message = ImageSendMessage(
             original_content_url=img_url,
             preview_image_url=img_url
+        )
+        
+    elif u'肥' in text:
+        
+        message = ImagemapSendMessage(
+            base_url='https://i.imgur.com/wpM584d.jpg',
+            alt_text='this is an imagemap',
+            base_size=BaseSize(height=1040, width=1040),
+            video=Video(
+                    original_content_url='https://i.imgur.com/1BnZGQC.mp4',
+                    preview_image_url='https://imgur.com/SVhJU6w.jpg',
+                    area=ImagemapArea(
+                    x=0, y=0, width=1040, height=585
+                ),
+                external_link=ExternalLink(# 影片結束後的連結
+                    link_uri='https://marketingliveincode.com/',
+                    label='查看更多…',
+                ),
+            ),
+            actions=[
+                URIImagemapAction(# 超連結
+                    link_uri='https://marketingliveincode.com/',
+                    area=ImagemapArea(
+                        x=0, y=0, width=520, height=1040
+                    )
+                ),
+                MessageImagemapAction(# 文字訊息
+                    text='肥戳我幹嘛！',
+                    area=ImagemapArea(
+                        x=520, y=0, width=520, height=1040
+                    )
+                )
+            ]
         )
         
     else:
