@@ -424,12 +424,16 @@ def load_image_url():
 def send_profile_to(prof):
     
     if adm_uid != prof.user_id:
-        ss = 'uid:['+prof.user_id+']\n'
-        # +'name:['+prof.display_name+']\n'
-        +'AccessTime:['+datetime.datetime.now().strftime("%d-%b-%Y-%H:%M:%S")+']'
-
-        message = TextSendMessage(text='from line bot\n' + ss)
-        line_bot_api.push_message(adm_uid, message)
+        try:
+            ss = 'uid:['+prof.user_id+']\n'
+            +'name:['+str(prof.display_name)+']\n'
+            +'AccessTime:['+str(datetime.datetime.now().strftime("%d-%b-%Y-%H:%M:%S"))+']'
+    
+            message = TextSendMessage(text=('from line bot\n' + ss))
+            line_bot_api.push_message(adm_uid, message)
+            
+        except TypeError:
+            print('TypeError')
 
 ######################################################
 
