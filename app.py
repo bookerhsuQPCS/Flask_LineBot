@@ -140,31 +140,17 @@ def pm25():
     return content
 
 def send_profile_to(profi):
-    message = None
+    _message = None
     try:
         content = ('uid:['+profi.user_id+']\n' \
         +'name:['+profi.display_name+']\n' \
         +'AccessTime:['+datetime.datetime.now().strftime("%Y-%m-%dT%H:%M:%S")+']')
-        message = 'from line bot\n{}'.format(content)
+        _message = 'from line bot\n{}'.format(content)
     except TypeError as er:
         print(er)
         return None
     
-    return message
-
-# my background thread
-class MyPiPiLine():
-
-    def __init__(self, message):
-        self.message = message
-        
-        thread = threading.Thread(target=self.run, args=())
-        thread.daemon = True
-        thread.start()
-
-    def run(self):
-        time.sleep(10)
-        print(f'run MyWorker with parameter {self.message}')
+    return _message
 
 
 # 監聽所有來自 /callback 的 Post Request
@@ -193,7 +179,8 @@ def handle_text_message(event):
     display_name = profile.display_name
     uid = profile.user_id
     text = event.message.text
-    text_msg = None
+    text_message = None
+    rich_message = None
 
     print('uid: {}'.format(uid))
     print('name:{}'.format(display_name))
@@ -222,35 +209,35 @@ def handle_text_message(event):
 
         print('package_id: '+str(package_id))
         print('sticker_id:'+str(sticker_id))
-        message = StickerSendMessage(
+        rich_message = StickerSendMessage(
             package_id=package_id,
             sticker_id=sticker_id
         )
 
     elif event.message.text == "蘋果即時新聞":
-        text_msg = apple_news()
+        text_message = apple_news()
     elif event.message.text == "近期熱門廢文":  
-        text_msg = ptt_hot()  
+        text_message = ptt_hot()  
     elif event.message.text == "近期上映":  
-        text_msg = movie.atmovies()
+        text_message = movie.atmovies()
     elif event.message.text == "新片":  
-        text_msg = movie.truemovie() 
+        text_message = movie.truemovie() 
     elif event.message.text == "今日即期匯率":  
-        text_msg = currency()
+        text_message = currency()
     elif event.message.text == "吃什麼":  
-        text_msg = maps.randombysearch()
+        text_message = maps.randombysearch()
     elif( len(event.message.text) == 4 and event.message.text.isdigit() ):
-        text_msg = 'https://goodinfo.tw/StockInfo/StockDividendSchedule.asp?STOCK_ID='+ event.message.text
+        text_message = 'https://goodinfo.tw/StockInfo/StockDividendSchedule.asp?STOCK_ID='+ event.message.text
     elif( len(event.message.text) == 2 and event.message.text.isdigit() ):
-        text_msg = ''
+        text_message = ''
     elif event.message.text == "USD":  
-        text_msg = currencylayer()
+        text_message = currencylayer()
     elif event.message.text == "空氣":  
-        text_msg = pm25()
+        text_message = pm25()
     elif event.message.text == "書": 
-        text_msg = book.books() + book.kobo() + book.taaze()    
+        text_message = book.books() + book.kobo() + book.taaze()    
     elif event.message.text == "正妹": 
-        text_msg = beauty.ptt_beauty()      
+        text_message = beauty.ptt_beauty()      
     # elif event.message.text == "larp": 
     #     text_msg = larp() 
 
@@ -262,14 +249,14 @@ def handle_text_message(event):
        
        img_url = girl_img_urls[random.randint(0, len(girl_img_urls)-1)]
         
-       message = ImageSendMessage(
+       rich_message = ImageSendMessage(
            original_content_url=img_url,
            preview_image_url=img_url
        )
        
     elif u'肥' in text:
        
-       message = ImagemapSendMessage(
+       rich_message = ImagemapSendMessage(
            base_url='https://i.imgur.com/wpM584d.jpg',
            alt_text='this is an imagemap',
            base_size=BaseSize(height=1040, width=1040),
@@ -304,7 +291,7 @@ def handle_text_message(event):
     elif text == '試試' or text.lower() == 'help':
 
         ###### 選單介面
-        message = TemplateSendMessage(
+        rich_message = TemplateSendMessage(
                     alt_text='貓喵寶寶',
                     template=ButtonsTemplate(
                         thumbnail_image_url='https://image.cache.storm.mg/styles/smg-800xauto-er/s3/media/image/2020/06/23/20200623-072521_U7111_M620467_21f2.jpg?itok=KocIzJI0',
@@ -334,7 +321,7 @@ def handle_text_message(event):
     elif text == '新聞' or text.lower() == 'news':
         executor.submit(cnaNews.get_taiwan_news,text,uid)
 
-        message = StickerSendMessage(
+        rich_message = StickerSendMessage(
                 package_id=11539,
                 sticker_id=52114133
             )
@@ -342,7 +329,7 @@ def handle_text_message(event):
     elif u'天氣' in text:
         executor.submit(cwbWeather.get_taiwan_weather,text,uid)
 
-        message = StickerSendMessage(
+        rich_message = StickerSendMessage(
                 package_id=11539,
                 sticker_id=52114113
             )
@@ -351,7 +338,7 @@ def handle_text_message(event):
 
         executor.submit(momoShopping.get_keyword_search,text[1:],uid)
 
-        message = StickerSendMessage(
+        rich_message = StickerSendMessage(
                 package_id=11537,
                 sticker_id=52002770
             )
@@ -363,25 +350,23 @@ def handle_text_message(event):
         #end if
         executor.submit(momoShopping.get_momo_top30,category,uid)
 
-        message = StickerSendMessage(
+        rich_message = StickerSendMessage(
                 package_id=11537,
                 sticker_id=52002748
             )
         
     else:
         ### 圖片
-        message = StickerSendMessage(
+        rich_message = StickerSendMessage(
             package_id=6632,
             sticker_id=11825376
         )
     #end if
         
-    line_bot_api.reply_message(event.reply_token,message)
-        
-    if text_msg is not None:
-        line_bot_api.reply_message(
-            event.reply_token,
-            TextSendMessage(text=text_msg))
+    if text_message is not None:
+        line_bot_api.reply_message(event.reply_token,TextSendMessage(text=text_message))
+    else:
+        line_bot_api.reply_message(event.reply_token,rich_message)
 
 @handler.add(MessageEvent, message=StickerMessage)
 def handle_sticker_message(event):

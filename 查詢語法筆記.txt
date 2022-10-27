@@ -1,0 +1,75 @@
+﻿-- 報表下拉與報表頁籤完整的關係
+WITH a AS  (
+	SELECT 
+		a.code param_type_code , a.name param_type_name , b.code param_config_code, b.name , b.code param_config_name, c.code param_config_detail_code, c.content
+	FROM PARAM_TYPE a 
+	left join PARAM_CONFIG b on a.UUID = b.PARENT_TYPE_UUID
+	left join PARAM_CONFIG_DETAIL c on b.UUID = c.PARAM_CONFIG_UUID
+	where a.code = 'V_SELECT' 
+	and b.code = 'MRPT'
+) ,
+b as (
+	SELECT 
+		a.code param_type_code , a.name param_type_name , b.code param_config_code, b.name param_config_name , c.code param_config_detail_code, c.content
+	FROM PARAM_TYPE a 
+	left join PARAM_CONFIG b on a.UUID = b.PARENT_TYPE_UUID
+	left join PARAM_CONFIG_DETAIL c on b.UUID = c.PARAM_CONFIG_UUID
+	where a.code = 'MRPT_XLS_SHEET'
+)
+select * from a left join b on a.param_config_detail_code = b.param_config_code order by a.param_config_detail_code , b.param_config_detail_code;
+
+
+
+-- 報表下拉與報表頁籤完整的關係 - 報表欄位
+WITH a AS  (
+	SELECT 
+		a.code param_type_code , a.name param_type_name , b.code param_config_code, b.name param_config_name , c.code param_config_detail_code, c.content
+	FROM PARAM_TYPE a 
+	left join PARAM_CONFIG b on a.UUID = b.PARENT_TYPE_UUID
+	left join PARAM_CONFIG_DETAIL c on b.UUID = c.PARAM_CONFIG_UUID
+	where a.code = 'MRPT_XLS_SHEET'
+) ,
+b as (
+	SELECT 
+		a.code param_type_code , a.name param_type_name , b.code param_config_code, b.name , b.code param_config_name, c.code param_config_detail_code, c.content
+	FROM PARAM_TYPE a 
+	left join PARAM_CONFIG b on a.UUID = b.PARENT_TYPE_UUID
+	left join PARAM_CONFIG_DETAIL c on b.UUID = c.PARAM_CONFIG_UUID
+	where a.code = 'MRPT_XLS_COLUMN' 
+)
+select a.* , '→' as '左關聯右' ,b.* from a left join b on a.param_config_detail_code = b.param_config_code order by a.param_config_detail_code , b.param_config_detail_code;
+
+
+
+-- 報表下拉選單
+select a.code , a.name , b.code , b.name , c.code , c.content from PARAM_TYPE a 
+left join PARAM_CONFIG b on a.UUID = b.PARENT_TYPE_UUID 
+left join PARAM_CONFIG_DETAIL c on b.UUID = c.PARAM_CONFIG_UUID
+where a.CODE = 'V_SELECT' 
+and b.CODE = 'MRPT';
+
+
+-- 報表頁籤全抓
+select a.code 類型代碼 , a.name 類型名稱, b.code 參數主檔代碼, b.name 參數主檔名稱, c.code 參數明細名稱, c.content 參數內容 from PARAM_TYPE a 
+left join PARAM_CONFIG b on a.UUID = b.PARENT_TYPE_UUID 
+left join PARAM_CONFIG_DETAIL c on b.UUID = c.PARAM_CONFIG_UUID
+where a.CODE = 'MRPT_XLS_SHEET' 
+order by b.code , c.code;
+
+-- 報表頁籤 - 排除總戶及分戶
+select a.code 類型代碼 , a.name 類型名稱, b.code 參數主檔代碼, b.name 參數主檔名稱, c.code 參數明細名稱, c.content 參數內容 from PARAM_TYPE a 
+left join PARAM_CONFIG b on a.UUID = b.PARENT_TYPE_UUID 
+left join PARAM_CONFIG_DETAIL c on b.UUID = c.PARAM_CONFIG_UUID
+where a.CODE = 'MRPT_XLS_SHEET' 
+and c.code not like '%_000'
+order by b.code , c.code;
+
+
+-- 報表頁籤 - 僅有總戶及分戶
+select a.code 類型代碼 , a.name 類型名稱, b.code 參數主檔代碼, b.name 參數主檔名稱, c.code 參數明細名稱, c.content 參數內容 from PARAM_TYPE a 
+left join PARAM_CONFIG b on a.UUID = b.PARENT_TYPE_UUID 
+left join PARAM_CONFIG_DETAIL c on b.UUID = c.PARAM_CONFIG_UUID
+where a.CODE = 'MRPT_XLS_SHEET' 
+and c.code like '%_000'
+order by b.code , c.code;
+
