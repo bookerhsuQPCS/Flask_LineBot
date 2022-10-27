@@ -6,12 +6,11 @@ Created on Sat Nov 18 21:00:17 21
 @author: bookerhsu
 """
 
-import requests, re, feedparser, random, time, os
-import json, datetime, pysnooper, threading
+import requests, threading, configparser, random, time, os, datetime, json
 import requests.packages.urllib3
-from bs4 import BeautifulSoup
 from flask import Flask, request, abort
 from concurrent.futures import ThreadPoolExecutor
+from bs4 import BeautifulSoup
 
 from linebot import (
     LineBotApi, WebhookHandler
@@ -39,6 +38,10 @@ from linebot.models import (
     SeparatorComponent, QuickReply, QuickReplyButton
 )
 
+import maps, movie, book, beauty, momoShopping, cnaNews, cwbWeather, jpStreetGirls
+
+## beginning..
+
 app = Flask(__name__)
 
 # 必須放上自己的Channel Access Token
@@ -50,83 +53,107 @@ handler = WebhookHandler(os.environ['CHANNEL_SECRET'])
 # 必須放上自己的Channel Secret
 adm_uid = WebhookHandler(os.environ['ADMIN_UISER_ID'])
 
+# 讀取 config.ini
+config = configparser.ConfigParser()
+config.read("configure.ini")
+# line_bot_api = LineBotApi(config['line_bot']['Channel_Access_Token'])
+# handler = WebhookHandler(config['line_bot']['Channel_Secret'])
+
 is_buy = False
 
-#category
-category_set = ('1900000000',
-        '2900000000',
-        '2000000000',
-        '1300000000',
-        '1400000000',
-        '1500000000',
-        '1700000000',
-        '2500000000',
-        '2700000000',
-        '1800000000',
-        '1600000000',
-        '4000000000',
-        '4100000000',
-        '3500000000',
-        '2400000000',
-        '1100000000',
-        '1200000000',
-        '2000000000',
-        '1300000000',
-        '1400000000',
-        '4000000000',
-        '4100000000',
-        '3500000000')
-
 girl_img_urls = []
+category_set = []
 
-mm_headers = {
-       'accept-encoding': 'gzip, deflate, br', 
-       'accept-language': 'zh-TW,zh;q=0.9,en-US;q=0.8,en;q=0.7', 
-       'Cache-Control': 'no-cache',
-       'pragma': 'no-cache',
-       'Upgrade-Insecure-Requests': '1',
-       'user-agent': 'Mozilla/5.0 (Windows NT 6.1; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/68.0.3440.106 Safari/537.36',
-       'content-type': 'application/x-www-form-urlencoded',
-       'accept': 'text/html,application/xhtml+xml,application/xml;q=0.9,image/webp,image/apng,*/*;q=0.8,application/signed-exchange;v=b3;q=0.9',
-       'cookie':''
-    }
-
-CWB_AUTHED_KEY = 'CWB-52F7E175-5DC9-4E41-9D16-6ED798D0C27E'
-
-TAIWAN_CITY = {'宜蘭縣':'F-D0047-001',
-    '桃園市':'F-D0047-005',
-    '新竹縣':'F-D0047-009',
-    '苗栗縣':'F-D0047-013',
-    '彰化縣':'F-D0047-017',
-    '南投縣':'F-D0047-021',
-    '雲林縣':'F-D0047-025',
-    '嘉義縣':'F-D0047-029',
-    '屏東縣':'F-D0047-033',
-    '臺東縣':'F-D0047-037',
-    '花蓮縣':'F-D0047-041',
-    '澎湖縣':'F-D0047-045',
-    '基隆市':'F-D0047-049',
-    '新竹市':'F-D0047-053',
-    '嘉義市':'F-D0047-057',
-    '臺北市':'F-D0047-061',
-    '高雄市':'F-D0047-065',
-    '新北市':'F-D0047-069',
-    '臺中市':'F-D0047-073',
-    '臺南市':'F-D0047-077',
-    '連江縣':'F-D0047-081',
-    '金門縣':'F-D0047-085'}
-
-executor = ThreadPoolExecutor(3)
+executor = ThreadPoolExecutor(10)
 
 requests.packages.urllib3.disable_warnings()
 
-headers = {
-        'Authorization': CWB_AUTHED_KEY, 
-        'User-Agent': 'Mozilla/5.0 (Macintosh; Intel Mac OS X 10_10_1) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/39.0.2171.95 Safari/537.36'
-    }
+def apple_news():
+    target_url = 'http://www.appledaily.com.tw/realtimenews/section/new/'
+    rs = requests.session()
+    res = rs.get(target_url, verify=False)
+    soup = BeautifulSoup(res.text, 'html.parser')
+    content = ""
+    for index, data in enumerate(soup.select('.rtddt a'), 0):
+        if index == 3:
+            return content
+
+        link = data['href']
+        notnews = link.find('entertainment')
+        if notnews == -1:
+            content += '{}\n\n'.format(link)
+    return content
+
+def ptt_hot():
+    target_url = 'http://disp.cc/b/PttHot'
+    rs = requests.session()
+    res = rs.get(target_url, verify=False)
+    soup = BeautifulSoup(res.text, 'html.parser')
+    content = ""
+    for index, data in enumerate(soup.select('#list div.row2 div span.listTitle')):
+        if index <= 13:
+            continue
+        title = data.text
+        link = "http://disp.cc/b/" + data.find('a')['href']
+        if data.find('a')['href'] == "796-59l9": #[公告]
+            break
+        content += '{}\n{}\n\n'.format(title, link)
+    return content
+
+def currencylayer():
+    target_url = 'http://apilayer.net/api/live?access_key='+config['currencylayer']['access_key']+'&currencies=TWD,JPY,CNY'
+    response = requests.get(target_url)
+    data = response.text
+    parsed = json.loads(data)
+    rates = parsed['quotes']
+    content = ""
+    for currency, rate in rates.items():
+        content += currency+"="+str(rate)+"\n"
+    return content[:-1]
+
+def currency():
+    target_url = 'http://rate.bot.com.tw/Pages/Static/UIP003.zh-TW.htm'
+    rs = requests.session()
+    res = rs.get(target_url, verify=False)
+    res.encoding = 'utf-8'
+    soup = BeautifulSoup(res.text, 'html.parser')
+    content = ""
+    for index, data in enumerate(soup.select('.rate-content-sight.text-right.print_hide')):
+        if index == 1: 
+            content += '美金(USD)'+data.text+"\n"
+            print('美金(USD)' , data.text)
+        elif index == 15:
+            content += '日圓(JPY)'+data.text+"\n"
+            print('日圓(JPY)' , data.text)
+        elif index == 37:
+            content += '人民幣(CNY)'+data.text
+            print('人民幣(CNY)' , data.text)
+
+    return content
+
+def pm25():
+    target_url = 'http://opendata2.epa.gov.tw/AQX.json'
+    response = requests.get(target_url)
+    data = response.text
+    results = json.loads(data)
+    content = results[3]['SiteName'] + ' PM2.5: '+ results[3]['PM2.5'] + ',狀態: ' + results[3]['Status']
+    return content
+
+def send_profile_to(profi):
+    message = None
+    try:
+        content = ('uid:['+profi.user_id+']\n' \
+        +'name:['+profi.display_name+']\n' \
+        +'AccessTime:['+datetime.datetime.now().strftime("%Y-%m-%dT%H:%M:%S")+']')
+        message = 'from line bot\n{}'.format(content)
+    except TypeError as er:
+        print(er)
+        return None
+    
+    return message
 
 # my background thread
-class MyPePe():
+class MyPiPiLine():
 
     def __init__(self, message):
         self.message = message
@@ -139,338 +166,6 @@ class MyPePe():
         time.sleep(10)
         print(f'run MyWorker with parameter {self.message}')
 
-def get_news(userid):
-    """
-    建立一個抓最新消息的function
-    """
-    print('uid: '+userid)
-    rss_url = 'http://feeds.feedburner.com/cnaFirstNews'
-    # 抓取資料
-    rss = feedparser.parse(rss_url)
-    tmp = []
-    for i, entry in enumerate(rss.entries[:5], start=0):
-        tmp.append(entry['title'] + ' ' + entry['link'])
-    #end if
-    
-    if (len(tmp)>0):
-        message =TextSendMessage("\n".join(tmp))
-        line_bot_api.push_message(userid, message)
-    #end if
-    print('get_news_push: end')
-
-def get_current_weather(keyword, userid):
-    """
-    Get current weather in specific city.
-
-    Args:
-        city: City Name
-
-    Returns:
-        Line TextSendMessage
-    """ 
-    '''https://opendata.cwb.gov.tw/api/v1/rest/datastore/F-C0032-001?Authorization=CWB-52F7E175-5DC9-4E41-9D16-6ED798D0C27E
-        &locationName=%E5%AE%9C%E8%98%AD%E7%B8%A3,%E8%8A%B1%E8%93%AE%E7%B8%A3&sort=time&timeFrom=2021-11-14T06%3A00%3A00&timeTo=2021-11-14T08%3A00%3A00
-    '''
-    # print('uid: '+userid)
-    # print('keyword:'+keyword) 
-    
-    errMsg = u'目前的 {} 無任何資料。'.format(keyword)
-    apiNm = 'F-C0032-001'
-    now = datetime.datetime.now()
-    timeFrom = '2021-11-14T06:00:00'
-    timeTo = '2021-11-14T18:00:00'
-    city = []
-    msg = []
-
-    if keyword[0] == u'台':
-        keyword = u'臺' + keyword[1:];
-    
-    if keyword[-2:] == u'天氣':
-        keyword = keyword[:-2]
-    
-    if keyword[-1] == u'縣' or keyword[-1] == u'市':
-        city = [keyword]
-    else:
-        if keyword == u'雙北':
-            city = [u'臺北市',u'新北市']
-        elif keyword == u'離島':
-            city = [u'澎湖縣',u'金門縣',u'連江縣']
-        elif keyword == u'東部':
-            city = [u'宜蘭縣',u'花蓮縣',u'臺東縣']
-        else:
-            for name in TAIWAN_CITY.keys():
-                if name[:-1] == keyword:
-                    city.append(name)
-                #end if
-            #end loop
-    #end if
-    
-    if len(city) == 0:
-        line_bot_api.push_message(userid, TextSendMessage(text=errMsg))
-        return
-    
-    print(now)
-    
-    if now.hour > 4:
-        timeFrom = '{}T06:00:00'.format(now.strftime("%Y-%m-%d"))
-        timeTo = '{}T18:00:00'.format(now.strftime("%Y-%m-%d"))
-    elif now.hour > 22 or now.hour < 5:
-        now += datetime.timedelta(days=1)
-        timeFrom = '{}T06:00:00'.format(now.strftime("%Y-%m-%d"))
-        timeTo = '{}T18:00:00'.format(now.strftime("%Y-%m-%d"))
-    else:
-        timeTo = '{}T06:00:00'.format(now.strftime("%Y-%m-%d"))
-        now -= datetime.timedelta(days=1)
-        timeFrom = '{}T18:00:00'.format(now.strftime("%Y-%m-%d"))
-
-    url = 'https://opendata.cwb.gov.tw/api/v1/rest/datastore/{}?Authorization={}' \
-        '&locationName={}&sort=time&timeFrom={}&timeTo={}'.format(apiNm, CWB_AUTHED_KEY, ','.join(city), timeFrom, timeTo)
-    
-    resp = requests.get(url, headers=headers, verify=False)
-    if resp.status_code != 200:
-        print('Invalid url:', resp.status_code)
-        line_bot_api.push_message(userid, TextSendMessage(text=errMsg))
-        return
-    
-    tww = json.loads(resp.text)
-    
-    if tww['success'] != 'true':
-        line_bot_api.push_message(userid, TextSendMessage(text=errMsg))
-        return
-        
-    wWx = ''
-    wPop = ''
-    wMinT = ''
-    wCT = ''
-    wMaxT = ''
-    records = tww['records']
-    location = records['location']
-    for loc in location:
-        weatherElement = loc['weatherElement']
-        for wElm in weatherElement:
-            eN = wElm['elementName']
-            wtime = wElm['time']
-            if eN == 'Wx':
-                wWx = wtime[0]['parameter']['parameterName']
-            elif eN == 'PoP':
-                wPop = wtime[0]['parameter']['parameterName']
-            elif eN == 'MinT':
-                wMinT = wtime[0]['parameter']['parameterName']
-            elif eN == 'CT':
-                wCT = wtime[0]['parameter']['parameterName']
-            elif eN == 'MaxT':
-                wMaxT = wtime[0]['parameter']['parameterName']
-            #end if
-        #end loop
-        msg.append('%s目前的天氣為%s。\n溫度為 %s 至 %s ℃，降雨機率為 %s %%。\n %s' % (loc['locationName'], wWx, wMinT, wMaxT, wPop, wCT))
-    #end loop
-
-    line_bot_api.push_message(userid, TextSendMessage(text='\n'.join(msg)))
-
-def get_momo_search(keyword,userid):
-    print('uid: '+userid)
-    print('keyword:'+keyword)           
-    target_url = 'https://m.momoshop.com.tw/search.momo?searchKeyword={}&couponSeq=&searchType=1&cateLevel=-1&ent=k&_imgSH=fourCardStyle'.format(keyword)
-    print(target_url)
-    
-    # handle request body
-    try:
-        requests.packages.urllib3.disable_warnings()
-        resp = requests.get(url=target_url, headers=mm_headers, timeout=15)
-    except requests.exceptions.Timeout as tim:
-        # Maybe set up for a retry, or continue in a retry loop
-        print(tim)
-        return
-    except requests.exceptions.TooManyRedirects as man:
-        # Tell the user their URL was bad and try a different one
-        print(man)
-        return
-    except requests.exceptions.RequestException as e:
-        # catastrophic error. bail.
-        print(e)
-        return
-    except requests.exceptions.HTTPError as err:
-        print(err)
-        return
- 
-    soup = BeautifulSoup(resp.text,"lxml")
-    _carouse_columns = []
-
-    prdListArea = soup.find("article", class_="prdListArea")
-    if prdListArea is not None:
-        _li_a = prdListArea.find_all('li', class_='goodsItemLi')
-        for idx, _li in enumerate(_li_a[:10], start=0):
-            _a = _li.find('a')
-            img  = _a.find('div',class_='swiper-wrapper').find('img')
-            _title = img['title']
-            match = re.search(r'【.+】(.+)', _title)
-            if match is not None:
-                _title = match.group(1)
-            #end if
-            
-            img_url = 'https:{}'.format(img['src']) if 'http' not in img['src'] else img['src']
-            img_url = img_url.replace('.webp','.jpg')
-    
-            _carouse_columns.append(CarouselColumn(
-                    thumbnail_image_url=img_url,
-                    text=_title,
-                    actions=[
-                        URITemplateAction(
-                            label='去逛逛',
-                            uri=('https://m.momoshop.com.tw'+_a['href']) if 'http' not in _a['href'] else _a['href']
-                        )
-                    ]
-                )
-            )
-    
-        #end for
-    
-        message = TemplateSendMessage(
-            alt_text='Carousel template',
-            template=CarouselTemplate(
-                columns=_carouse_columns
-            )
-        )
-    
-        line_bot_api.push_message(userid, message)
-    #end if
-    print('getmomo_search_push:end')
-
-def get_momo_top30(category,userid):
-    print('uid: '+userid)
-    print('category:'+category)
-    target_url = 'https://m.momoshop.com.tw/category.momo?cn={}&top30New=y'.format(category)
-    
-    # handle request body
-    try:
-        requests.packages.urllib3.disable_warnings()
-        resp = requests.get(url=target_url, headers=mm_headers, timeout=15)
-    except requests.exceptions.Timeout as tim:
-        # Maybe set up for a retry, or continue in a retry loop
-        print(tim)
-        return
-    except requests.exceptions.TooManyRedirects as man:
-        # Tell the user their URL was bad and try a different one
-        print(man)
-        return
-    except requests.exceptions.RequestException as e:
-        # catastrophic error. bail.
-        print(e)
-        return
-    except requests.exceptions.HTTPError as err:
-        print(err)
-        return
- 
-    soup = BeautifulSoup(resp.text,"lxml")
-    _cn = category
-    _carouse_columns = []
-    pathArea = soup.find("article", class_="pathArea")
-    if pathArea is not None and len(pathArea) > 0:
-        _cn = pathArea.find("a", attrs={"cn": category}).text
-    #end if
-
-    productInfo = soup.find_all("a", class_="productInfo")
-    if productInfo is not None and len(productInfo) > 0:
-        for pd in productInfo[:10]:
-            prdImgWrap = pd.find("div", class_="prdImgWrap")
-            if prdImgWrap is not None:
-                act = prdImgWrap.find("div", class_="swiper-slide-active")
-                if act is None:
-                    act = prdImgWrap.find_all("div", class_="swiper-slide", limit=1)[0]
-                #end if
-                img = act.find("img")
-                _alt = img['alt']
-                img_url = img['data-original'] if 'http' in img['data-original'] else 'https://m.momoshop.com.tw{}'.format(img['data-original'])
-                img_url = img_url.replace('.webp','.jpg')
-                
-                _column = CarouselColumn(
-                    thumbnail_image_url=img_url,
-                    text=_alt,
-                    actions=[
-                        URITemplateAction(
-                            label='去看看',
-                            uri=pd['href'] if 'http' in pd['href'] else 'https://m.momoshop.com.tw{}'.format(pd['href'])
-                        )
-                    ]
-                )
-                _carouse_columns.append(_column)
-            #end if
-        # end loop
-        
-        print(_carouse_columns)
-       
-        msg = TemplateSendMessage(
-            alt_text='{} TOP30'.format(_cn),
-            imageAspectRatio='square',
-            imageSize='contain',
-            template=CarouselTemplate(
-                columns=_carouse_columns
-            )
-        )
-
-        line_bot_api.push_message(userid, msg)
-    #end if
-    print('getmomo_top30_push: end')
-
-def load_image_url():
-    _img_urls = []
-
-    with open("/app/girl_img_urls.lst", "r") as f:
-        for row in f:
-            _img_urls.append(row.rstrip('\n'))
-    
-    return _img_urls
-
-def send_profile_to(prof):
-    
-    print(adm_uid)
-    print(prof.user_id)
-    if adm_uid != prof.user_id:
-        try:
-            sts = ('uid:['+prof.user_id+']\n' \
-            +'name:['+prof.display_name+']\n' \
-            +'AccessTime:['+datetime.datetime.now().strftime("%Y-%m-%dT%H:%M:%S")+']')
-            print(sts)
-    
-            message = TextSendMessage(text=('from line bot\n' + sts))
-            line_bot_api.push_message(adm_uid, message)
-            
-        except TypeError as er:
-            print(er)
-
-######################################################
-
-@pysnooper.snoop()
-def get_stock_info(stock_id,userid):
-    headers = {'User-Agent': 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) '
-                             'AppleWebKit/537.36 (KHTML, like Gecko) '
-                             'Chrome/66.0.3359.181 Safari/537.36',
-                             "Accept-Language":"zh-TW,zh;q=0.8"}
-    resp = requests.get('https://www.google.com/search?q=TPE:{}'.format(stock_id), headers=headers)
-    if resp.status_code != 200:
-        print('Invalid url:', resp.url)
-        return None
-
-    soup = BeautifulSoup(resp.text, 'html.parser')
-    stock = dict()
-
-    sections = soup.find_all('g-card-section')
-
-    # 第 2 個 g-card-section, 取出公司名及即時股價資訊
-    stock['name'] = sections[1].div.text
-    spans = sections[1].find_all('div', recursive=False)[1].find_all('span', recursive=False)
-    stock['current_price'] = spans[0].text
-    stock['current_change'] = spans[1].text
-
-    # 第 4 個 g-card-section, 有左右兩個 table 分別存放股票資訊
-    for table in sections[3].find_all('table'):
-        for tr in table.find_all('tr')[:3]:
-            key = tr.find_all('td')[0].text.lower().strip()
-            value = tr.find_all('td')[1].text.strip()
-            stock[key] = value
-    
-    message = TextSendMessage(text='\n'.join([k + ' ' + v for k, v in stock.items()]))
-    line_bot_api.push_message(userid, message)
 
 # 監聽所有來自 /callback 的 Post Request
 @app.route("/callback", methods=['POST'])
@@ -495,18 +190,118 @@ def callback():
 def handle_text_message(event):
     # 取得個人資料
     profile = line_bot_api.get_profile(event.source.user_id)
-    nameid = profile.display_name
+    display_name = profile.display_name
     uid = profile.user_id
     text = event.message.text
+    text_msg = None
 
     print('uid: {}'.format(uid))
-    print('name:{}'.format(nameid))
+    print('name:{}'.format(display_name))
     print('keyword:{}'.format(text))
     
     send_profile_to(profile)
 
+    # 傳送貼圖
+    if text == '貼圖':
+        package_id = random.randint(1, 2)
+        sticker_id = 1
+        if package_id == '1':
+            sticker_id = random.randint(1, 88)
+            if sticker_id > 17:
+                sticker_id = sticker_id + 83
+            if sticker_id > 139:
+                sticker_id = sticker_id + 262
+        else:
+            sticker_id = random.randint(18, 114)
+            if sticker_id < 17:
+                sticker_id = sticker_id + 17
+            if sticker_id > 47:
+                sticker_id = sticker_id + 93
+            if sticker_id > 179:
+                sticker_id = sticker_id + 313
+
+        print('package_id: '+str(package_id))
+        print('sticker_id:'+str(sticker_id))
+        message = StickerSendMessage(
+            package_id=package_id,
+            sticker_id=sticker_id
+        )
+
+    elif event.message.text == "蘋果即時新聞":
+        text_msg = apple_news()
+    elif event.message.text == "近期熱門廢文":  
+        text_msg = ptt_hot()  
+    elif event.message.text == "近期上映":  
+        text_msg = movie.atmovies()
+    elif event.message.text == "新片":  
+        text_msg = movie.truemovie() 
+    elif event.message.text == "今日即期匯率":  
+        text_msg = currency()
+    elif event.message.text == "吃什麼":  
+        text_msg = maps.randombysearch()
+    elif( len(event.message.text) == 4 and event.message.text.isdigit() ):
+        text_msg = 'https://goodinfo.tw/StockInfo/StockDividendSchedule.asp?STOCK_ID='+ event.message.text
+    elif( len(event.message.text) == 2 and event.message.text.isdigit() ):
+        text_msg = ''
+    elif event.message.text == "USD":  
+        text_msg = currencylayer()
+    elif event.message.text == "空氣":  
+        text_msg = pm25()
+    elif event.message.text == "書": 
+        text_msg = book.books() + book.kobo() + book.taaze()    
+    elif event.message.text == "正妹": 
+        text_msg = beauty.ptt_beauty()      
+    # elif event.message.text == "larp": 
+    #     text_msg = larp() 
+
+    elif u'美女' in text or u'酒店' in text or u'辣妹' in text:
+       
+       global girl_img_urls
+       if len(girl_img_urls) == 0:
+           girl_img_urls = jpStreetGirls.load_image_url()
+       
+       img_url = girl_img_urls[random.randint(0, len(girl_img_urls)-1)]
+        
+       message = ImageSendMessage(
+           original_content_url=img_url,
+           preview_image_url=img_url
+       )
+       
+    elif u'肥' in text:
+       
+       message = ImagemapSendMessage(
+           base_url='https://i.imgur.com/wpM584d.jpg',
+           alt_text='this is an imagemap',
+           base_size=BaseSize(height=1040, width=1040),
+           video=Video(
+                   original_content_url='https://i.imgur.com/1BnZGQC.mp4',
+                   preview_image_url='https://imgur.com/SVhJU6w.jpg',
+                   area=ImagemapArea(
+                   x=0, y=0, width=1040, height=585
+               ),
+               external_link=ExternalLink(# 影片結束後的連結
+                   link_uri='https://marketingliveincode.com/',
+                   label='查看更多…',
+               ),
+           ),
+           actions=[
+               URIImagemapAction(# 超連結
+                   link_uri='https://marketingliveincode.com/',
+                   area=ImagemapArea(
+                       x=0, y=0, width=520, height=1040
+                   )
+               ),
+               MessageImagemapAction(# 文字訊息
+                   text='肥戳我幹嘛！',
+                   area=ImagemapArea(
+                       x=520, y=0, width=520, height=1040
+                   )
+               )
+           ]
+       )
+
     # 買東西
-    if text == '試試' or text.lower() == 'help':
+    elif text == '試試' or text.lower() == 'help':
 
         ###### 選單介面
         message = TemplateSendMessage(
@@ -537,42 +332,24 @@ def handle_text_message(event):
                 )
 
     elif text == '新聞' or text.lower() == 'news':
-        executor.submit(get_news,uid)
+        executor.submit(cnaNews.get_taiwan_news,text,uid)
 
         message = StickerSendMessage(
                 package_id=11539,
                 sticker_id=52114133
             )
 
-    # 傳送貼圖
-    elif text == '貼圖':
-        package_id = random.randint(1, 2)
-        sticker_id = 1
-        if package_id == '1':
-            sticker_id = random.randint(1, 88)
-            if sticker_id > 17:
-                sticker_id = sticker_id + 83
-            if sticker_id > 139:
-                sticker_id = sticker_id + 262
-        else:
-            sticker_id = random.randint(18, 114)
-            if sticker_id < 17:
-                sticker_id = sticker_id + 17
-            if sticker_id > 47:
-                sticker_id = sticker_id + 93
-            if sticker_id > 179:
-                sticker_id = sticker_id + 313
+    elif u'天氣' in text:
+        executor.submit(cwbWeather.get_taiwan_weather,text,uid)
 
-        print('package_id: '+str(package_id))
-        print('sticker_id:'+str(sticker_id))
         message = StickerSendMessage(
-            package_id=package_id,
-            sticker_id=sticker_id
-        )
+                package_id=11539,
+                sticker_id=52114113
+            )
 
     elif text[0] == u'找':
 
-        executor.submit(get_momo_search,text[1:],uid)
+        executor.submit(momoShopping.get_keyword_search,text[1:],uid)
 
         message = StickerSendMessage(
                 package_id=11537,
@@ -584,66 +361,12 @@ def handle_text_message(event):
         if len(text.split(' ')) > 1:
             category = text.split(' ')[1];
         #end if
-        executor.submit(get_momo_top30,category,uid)
+        executor.submit(momoShopping.get_momo_top30,category,uid)
 
         message = StickerSendMessage(
                 package_id=11537,
                 sticker_id=52002748
             )
-
-    elif u'天氣' in text:
-        executor.submit(get_current_weather,text,uid)
-
-        message = StickerSendMessage(
-                package_id=11539,
-                sticker_id=52114113
-            )     
-
-    elif u'美女' in text or u'酒店' in text or u'辣妹' in text:
-        
-        global girl_img_urls
-        if len(girl_img_urls) == 0:
-            girl_img_urls = load_image_url()
-        
-        img_url = girl_img_urls[random.randint(0, len(girl_img_urls)-1)]
-         
-        message = ImageSendMessage(
-            original_content_url=img_url,
-            preview_image_url=img_url
-        )
-        
-    elif u'肥' in text:
-        
-        message = ImagemapSendMessage(
-            base_url='https://i.imgur.com/wpM584d.jpg',
-            alt_text='this is an imagemap',
-            base_size=BaseSize(height=1040, width=1040),
-            video=Video(
-                    original_content_url='https://i.imgur.com/1BnZGQC.mp4',
-                    preview_image_url='https://imgur.com/SVhJU6w.jpg',
-                    area=ImagemapArea(
-                    x=0, y=0, width=1040, height=585
-                ),
-                external_link=ExternalLink(# 影片結束後的連結
-                    link_uri='https://marketingliveincode.com/',
-                    label='查看更多…',
-                ),
-            ),
-            actions=[
-                URIImagemapAction(# 超連結
-                    link_uri='https://marketingliveincode.com/',
-                    area=ImagemapArea(
-                        x=0, y=0, width=520, height=1040
-                    )
-                ),
-                MessageImagemapAction(# 文字訊息
-                    text='肥戳我幹嘛！',
-                    area=ImagemapArea(
-                        x=520, y=0, width=520, height=1040
-                    )
-                )
-            ]
-        )
         
     else:
         ### 圖片
@@ -654,6 +377,11 @@ def handle_text_message(event):
     #end if
         
     line_bot_api.reply_message(event.reply_token,message)
+        
+    if text_msg is not None:
+        line_bot_api.reply_message(
+            event.reply_token,
+            TextSendMessage(text=text_msg))
 
 @handler.add(MessageEvent, message=StickerMessage)
 def handle_sticker_message(event):
@@ -679,7 +407,7 @@ def handle_location_message(event):
 def handle_content_message(event):
     
     profile = line_bot_api.get_profile(event.source.user_id)
-    send_profile_to(profile)
+    beauty.send_profile_to(profile)
     ext = ''
     
     if isinstance(event.message, ImageMessage):
@@ -700,11 +428,10 @@ def handle_content_message(event):
     )
     
     line_bot_api.reply_message(event.reply_token,message)
-    
 
 @handler.add(MessageEvent, message=FileMessage)
 def handle_file_message(event):
-    xx = None
+    xy = None
 
 @handler.add(FollowEvent)
 def handle_follow(event):
