@@ -217,31 +217,31 @@ def handle_text_message(event):
             sticker_id=sticker_id
         )
 
-    elif event.message.text == "蘋果即時新聞":
+    elif text == "蘋果即時新聞":
         text_message = apple_news()
-    elif event.message.text == "近期熱門廢文":  
+    elif text == "近期熱門廢文":  
         text_message = ptt_hot()  
-    elif event.message.text == "近期上映":  
+    elif text == "近期上映":  
         text_message = movie.atmovies()
-    elif event.message.text == "新片":  
+    elif text == "新片":  
         text_message = movie.truemovie() 
-    elif event.message.text == "今日即期匯率":  
+    elif text == "今日即期匯率":  
         text_message = currency()
-    elif event.message.text == "吃什麼":  
+    elif text == "吃什麼":  
         text_message = maps.randombysearch()
-    elif( len(event.message.text) == 4 and event.message.text.isdigit() ):
+    elif( len(text) == 4 and text.isdigit() ):
         text_message = 'https://goodinfo.tw/StockInfo/StockDividendSchedule.asp?STOCK_ID='+ event.message.text
-    elif( len(event.message.text) == 2 and event.message.text.isdigit() ):
+    elif( len(text) == 2 and text.isdigit() ):
         text_message = ''
-    elif event.message.text == "USD":  
+    elif text == "USD":  
         text_message = currencylayer()
-    elif event.message.text == "空氣":  
+    elif text == "空氣":  
         text_message = pm25()
-    elif event.message.text == "書": 
+    elif text == "書": 
         text_message = book.books() + book.kobo() + book.taaze()    
-    elif event.message.text == "正妹": 
+    elif text == "正妹": 
         text_message = beauty.ptt_beauty()      
-    # elif event.message.text == "larp": 
+    # elif text == "larp": 
     #     text_msg = larp() 
 
     elif u'美女' in text or u'酒店' in text or u'辣妹' in text:
