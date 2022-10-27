@@ -299,7 +299,7 @@ def handle_text_message(event):
                     template=ButtonsTemplate(
                         thumbnail_image_url='https://image.cache.storm.mg/styles/smg-800xauto-er/s3/media/image/2020/06/23/20200623-072521_U7111_M620467_21f2.jpg?itok=KocIzJI0',
                         title='選單',
-                        text='  ',
+                        text='熱騰騰',
                         actions=[
                             MessageTemplateAction(
                                 label='最新新聞',
@@ -316,6 +316,42 @@ def handle_text_message(event):
                             MessageTemplateAction(
                                 label='銷售排行',
                                 text='top30'
+                            ),
+							MessageTemplateAction(
+                                label='PTT 熱門廢文',
+                                text='近期熱門廢文'
+                            ),
+							MessageTemplateAction(
+                                label='近期上映',
+                                text='近期上映'
+                            ),
+							MessageTemplateAction(
+                                label='新片評比',
+                                text='新片'
+                            ),
+							MessageTemplateAction(
+                                label='即期匯率',
+                                text='今日即期匯率'
+                            ),
+							MessageTemplateAction(
+                                label='想吃什麼',
+                                text='吃什麼'
+                            ),
+							MessageTemplateAction(
+                                label='美元匯率',
+                                text='USD'
+                            ),
+							MessageTemplateAction(
+                                label='空氣品質',
+                                text='空氣'
+                            ),
+							MessageTemplateAction(
+                                label='暢銷書',
+                                text='書'
+                            ),
+							MessageTemplateAction(
+                                label='當紅正妹',
+                                text='正妹'
                             )
                         ]
                     )
