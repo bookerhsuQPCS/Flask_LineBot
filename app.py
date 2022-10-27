@@ -68,6 +68,9 @@ executor = ThreadPoolExecutor(10)
 
 requests.packages.urllib3.disable_warnings()
 
+def assemble(line_message):
+    return None
+
 def apple_news():
     target_url = 'http://www.appledaily.com.tw/realtimenews/section/new/'
     rs = requests.session()
@@ -406,7 +409,7 @@ def handle_content_message(event):
     else:
         return
     
-    message = TextSendMessage(
+    text_message = TextSendMessage(
         text=('こんにちは ['+profile.display_name+'] はじめまして.'),
         sender=Sender(
         name="message",
@@ -414,7 +417,7 @@ def handle_content_message(event):
         )
     )
     
-    line_bot_api.reply_message(event.reply_token,message)
+    line_bot_api.reply_message(event.reply_token,text_message)
 
 @handler.add(MessageEvent, message=FileMessage)
 def handle_file_message(event):
@@ -424,12 +427,11 @@ def handle_file_message(event):
 def handle_follow(event):
 
     profile = line_bot_api.get_profile(event.source.user_id)
-    ss = ('uid:['+profile.user_id+']\n' \
+    content = ('uid:['+profile.user_id+']\n' \
     +'name:['+profile.display_name+']\n' \
     +'FollowTime:['+datetime.datetime.now().strftime("%Y-%m-%dT%H:%M:%S")+']')
     
-    message = TextSendMessage(text='from line bot\n' + ss)
-    line_bot_api.push_message(adm_uid, message)
+    line_bot_api.push_message(adm_uid, TextSendMessage(text='from line bot\n{}'.format(content)))
 
     line_bot_api.reply_message(
         event.reply_token, TextSendMessage(text='welecome {} follow me.').format(profile.display_name))
@@ -442,12 +444,11 @@ def handle_unfollow(event):
 def handle_join(event):
 
     profile = line_bot_api.get_profile(event.source.user_id)
-    ss = ('uid:['+profile.user_id+']\n' \
+    content = ('uid:['+profile.user_id+']\n' \
     +'name:['+profile.display_name+']\n' \
     +'JoinTime:['+datetime.datetime.now().strftime("%Y-%m-%dT%H:%M:%S")+']')
     
-    message = TextSendMessage(text='from line bot\n' + ss)
-    line_bot_api.push_message(adm_uid, message)
+    line_bot_api.push_message(adm_uid, TextSendMessage(text='from line bot\n{}'.format(content)))
     
     line_bot_api.reply_message(
         event.reply_token, TextSendMessage(text='welecome {},Joined this {}.').format(profile.display_name, event.source.type))
