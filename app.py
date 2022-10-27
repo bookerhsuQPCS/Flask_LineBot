@@ -363,10 +363,12 @@ def handle_text_message(event):
         )
     #end if
         
-    if text_message is not None:
+    if text_message is not None and len(text_message) > 0:
         line_bot_api.reply_message(event.reply_token,TextSendMessage(text=text_message))
+        text_message = None
     else:
         line_bot_api.reply_message(event.reply_token,rich_message)
+        rich_message = None
 
 @handler.add(MessageEvent, message=StickerMessage)
 def handle_sticker_message(event):
