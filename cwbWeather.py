@@ -111,6 +111,7 @@ def get_taiwan_weather(keyword,uid):
     url = 'https://opendata.cwb.gov.tw/api/v1/rest/datastore/{}?Authorization={}' \
         '&locationName={}&sort=time&timeFrom={}&timeTo={}'.format(apiNm, CWB_AUTHED_KEY, ','.join(city), timeFrom, timeTo)
     
+    requests.packages.urllib3.disable_warnings()
     resp = requests.get(url, headers=cwb_headers, verify=False)
     if resp.status_code != 200:
         print('Invalid url:', resp.status_code)
