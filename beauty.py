@@ -39,6 +39,7 @@ def craw_page(res):
 
 def ptt_beauty():
     rs = requests.session()
+    rs.cookies = dict({'cookie':'over18=1;'})
     res = rs.get('https://www.ptt.cc/bbs/Beauty/index.html', verify=False)
     soup = BeautifulSoup(res.text, 'html.parser')
     all_page_url = soup.select('.btn.wide')[1]['href']
