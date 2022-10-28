@@ -1,9 +1,10 @@
 import requests
 from bs4 import BeautifulSoup
 
-headers = {
-    'user-agent': 'Mozilla/5.0 AppleWebKit/537.36 (KHTML, like Gecko; compatible; Googlebot/2.1; +http://www.google.com/bot.html) Safari/537.36',
-    'cookie':'over18=1;'
+# post要傳的資料
+payload = {
+    'from': '/bbs/Gossiping/index.html',
+    'yes': 'yes'
 }
 
 def get_page_number(content):
@@ -44,9 +45,13 @@ def craw_page(res):
 
 def ptt_beauty():
     
-    rs = requests.session()
-    res = rs.get('https://www.ptt.cc/bbs/Beauty/index.html', headers=headers, verify=False)
-    soup = BeautifulSoup(res.text, 'html.parser')
+    # 用session紀錄此次使用的cookie
+    rss = requests.session()
+    # post傳遞資料
+    response = rss.post("https://www.ptt.cc/ask/over18", data=payload)
+    # 再get一次PTT八卦板首頁
+    response = rss.get("https://www.ptt.cc/bbs/Gossiping/index.html", verify=False)
+    soup = BeautifulSoup(response.text, 'html.parser')
     all_page_url = soup.select('.btn.wide')[1]['href']
     start_page_id = get_page_number(all_page_url)
 
@@ -59,7 +64,7 @@ def ptt_beauty():
     while index_list:
         index = index_list.pop(0)
         print(index)
-        res = rs.get(index, verify=False)
+        res = rss.get(index, verify=False)
         article_list = craw_page(res)
 
     content = ''

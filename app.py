@@ -342,8 +342,8 @@ def handle_text_message(event):
                         text='熱騰騰的',
                         actions=[
                             MessageTemplateAction(
-                                label='雙北/離島天氣',
-                                text='雙北離島天氣'
+                                label='雙北天氣',
+                                text='雙北天氣'
                             ),
 							MessageTemplateAction(
                                 label='PTT 熱門廢文',
