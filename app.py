@@ -393,7 +393,7 @@ def handle_text_message(event):
           
     elif text.lower() == 'top30':
         
-        futur = executor.submit(momoShopping.get_momo_top30,uid)
+        future = executor.submit(momoShopping.get_momo_top30,uid)
         future.add_done_callback(wait_to_push_message)
 
         push_message = StickerSendMessage(
