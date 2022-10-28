@@ -47,7 +47,7 @@ cwb_headers = {
        'cookie':''
     }
 
-def get_taiwan_weather(location,uid):
+def get_taiwan_weather(area,uid):
     """
     Get current weather in specific city.
 
@@ -60,42 +60,42 @@ def get_taiwan_weather(location,uid):
     '''https://opendata.cwb.gov.tw/api/v1/rest/datastore/F-C0032-001?Authorization=CWB-52F7E175-5DC9-4E41-9D16-6ED798D0C27E
         &locationName=%E5%AE%9C%E8%98%AD%E7%B8%A3,%E8%8A%B1%E8%93%AE%E7%B8%A3&sort=time&timeFrom=2021-11-14T06%3A00%3A00&timeTo=2021-11-14T08%3A00%3A00
     '''
-    print('location:'+location) 
+    print('area:'+area) 
     
     apiNm = 'F-C0032-001'
     now = datetime.datetime.now()
-    timeFrom = '2021-11-14T06:00:00'
-    timeTo = '2021-11-14T18:00:00'
+    timeFrom = '2022-10-29T06:00:00'
+    timeTo = '2022-10-29T18:00:00'
     city = []
     msg = []
 
-    if location[0] == u'台':
-        location = u'臺' + location[1:];
+    if area[0] == u'台':
+        area = u'臺' + area[1:];
     
-    if location[-2:] == u'天氣':
-        location = location[:-2]
+    if area[-2:] == u'天氣':
+        area = area[:-2]
     
-    if location[-1] == u'縣' or location[-1] == u'市':
-        city = [location]
+    if area[-1] == u'縣' or area[-1] == u'市':
+        city = [area]
     else:
-        if location == u'雙北':
+        if area == u'雙北':
             city = [u'臺北市',u'新北市']
-        elif location == u'離島':
+        elif area == u'離島':
             city = [u'澎湖縣',u'金門縣',u'連江縣']
-        elif location == u'雙北離島':
+        elif area == u'雙北離島':
             city = [u'臺北市',u'新北市',u'澎湖縣',u'金門縣',u'連江縣']
-        elif location == u'東部':
+        elif area == u'東部':
             city = [u'宜蘭縣',u'花蓮縣',u'臺東縣']
         else:
             for name in TAIWAN_CITY.keys():
-                if name[:-1] == location:
+                if name[:-1] == area:
                     city.append(name)
                 #end if
             #end loop
     #end if
     
     if len(city) == 0:
-        return u'目前的 {} 無任何資料。'.format(location)
+        return u'目前的{}無任何天氣資料。'.format(area)
     if now.hour > 4:
         timeFrom = '{}T06:00:00'.format(now.strftime("%Y-%m-%d"))
         timeTo = '{}T18:00:00'.format(now.strftime("%Y-%m-%d"))

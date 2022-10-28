@@ -35,7 +35,7 @@ category_set = ('1900000000',
         '4100000000',
         '3500000000')
 
-momo_headers = {
+_headers = {
        'accept-encoding': 'gzip, deflate, br', 
        'accept-language': 'zh-TW,zh;q=0.9,en-US;q=0.8,en;q=0.7', 
        'Cache-Control': 'no-cache',
@@ -43,8 +43,7 @@ momo_headers = {
        'Upgrade-Insecure-Requests': '1',
        'user-agent': 'Mozilla/5.0 (Windows NT 6.1; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/68.0.3440.106 Safari/537.36',
        'content-type': 'application/x-www-form-urlencoded',
-       'accept': 'text/html,application/xhtml+xml,application/xml;q=0.9,image/webp,image/apng,*/*;q=0.8,application/signed-exchange;v=b3;q=0.9',
-       'cookie':''
+       'accept': 'text/html,application/xhtml+xml,application/xml;q=0.9,image/webp,image/apng,*/*;q=0.8,application/signed-exchange;v=b3;q=0.9'
     }
 
 
@@ -56,7 +55,7 @@ def get_keyword_search(keyword,uid):
     # handle request body
     try:
         requests.packages.urllib3.disable_warnings()
-        resp = requests.get(url=target_url, headers=momo_headers, timeout=15)
+        resp = requests.get(url=target_url, headers=_headers, timeout=15)
     except requests.exceptions.Timeout as tim:
         # Maybe set up for a retry, or continue in a retry loop
         print(tim)
@@ -112,20 +111,18 @@ def get_keyword_search(keyword,uid):
     
     print('get_keyword_search:end')
     
-    return {'uid': uid, 'type':'template', 'content':message}
+    return dict({'uid': uid, 'type':'template', 'content':message})
 
 def get_momo_top30(uid):
     category = category_set[random.randint(0, len(category_set)-1)]
-    if len(text.split(' ')) > 1:
-        category = text.split(' ')[1];
-    #end if
     print('category:'+category)
+    
     target_url = 'https://m.momoshop.com.tw/category.momo?cn={}&top30New=y'.format(category)
     
     # handle request body
     try:
         requests.packages.urllib3.disable_warnings()
-        resp = requests.get(url=target_url, headers=momo_headers, timeout=15)
+        resp = requests.get(url=target_url, headers=_headers, timeout=15)
     except requests.exceptions.Timeout as tim:
         # Maybe set up for a retry, or continue in a retry loop
         print(tim)
@@ -149,6 +146,8 @@ def get_momo_top30(uid):
     if pathArea is not None and len(pathArea) > 0:
         _cn = pathArea.find("a", attrs={"cn": category}).text
     #end if
+
+    print('12345678')
 
     productInfo = soup.find_all("a", class_="productInfo")
     if productInfo is not None and len(productInfo) > 0:
@@ -185,5 +184,5 @@ def get_momo_top30(uid):
     
     print('get_momo_top30: end')
     
-    return {'uid': uid, 'type':'template', 'content':msg}
+    return dict({'uid': uid, 'type':'template', 'content':msg})
 
