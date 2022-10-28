@@ -1,6 +1,11 @@
 import requests
 from bs4 import BeautifulSoup
 
+headers = {
+    'user-agent': 'Mozilla/5.0 AppleWebKit/537.36 (KHTML, like Gecko; compatible; Googlebot/2.1; +http://www.google.com/bot.html) Safari/537.36',
+    'cookie':'over18=1;'
+}
+
 def get_page_number(content):
     #/bbs/Beauty/index{2435}.html
     start_index = content.find('index')
@@ -38,9 +43,9 @@ def craw_page(res):
     return article_seq
 
 def ptt_beauty():
+    
     rs = requests.session()
-    rs.cookies = dict({'cookie':'over18=1;'})
-    res = rs.get('https://www.ptt.cc/bbs/Beauty/index.html', verify=False)
+    res = rs.get('https://www.ptt.cc/bbs/Beauty/index.html', headers=headers, verify=False)
     soup = BeautifulSoup(res.text, 'html.parser')
     all_page_url = soup.select('.btn.wide')[1]['href']
     start_page_id = get_page_number(all_page_url)
