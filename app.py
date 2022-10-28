@@ -6,7 +6,7 @@ Created on Sat Nov 18 21:00:17 21
 @author: bookerhsu
 """
 
-import requests, threading, configparser, random, time, os, datetime, json
+import requests, configparser, random, os, datetime, json
 import requests.packages.urllib3
 from flask import Flask, request, abort
 from concurrent.futures import ThreadPoolExecutor
@@ -66,10 +66,52 @@ category_set = []
 
 executor = ThreadPoolExecutor(10)
 
-requests.packages.urllib3.disable_warnings()
+# requests.packages.urllib3.disable_warnings()
 
-def assemble(line_message):
-    return None
+def wait_to_push_message(future):
+    
+    try:
+        result = future.result()
+        print(result)
+        
+        if result is None:
+            return
+        
+        if isinstance(result, dict):
+            line_message = assemble(result)
+            line_bot_api.push_message(result['uid'], line_message)
+    
+    except Exception as e:
+        print(e)
+
+
+def assemble(messaget):
+
+    if messaget['type'] == 'text':
+        return TextSendMessage(text=messaget['content'])
+
+    elif messaget['type'] == 'template':
+        _carouse_columns = []
+
+        if isinstance(messaget['content']['carouse_columns'],list):
+            for _carouse in messaget['content']['carouse_columns']:
+                _carouse_columns.append(CarouselColumn(
+                        thumbnail_image_url=_carouse['thumbnail_image_url'],
+                        text=_carouse['text'],
+                        actions=_carouse['actions']
+                    )
+                )
+        
+            return TemplateSendMessage(
+                alt_text=messaget['content']['alt_text'],
+                template=CarouselTemplate(
+                    columns=_carouse_columns
+                )
+            )
+
+    else: 
+        raise Exception("Data provided can't be in the past")
+
 
 def apple_news():
     target_url = 'http://www.appledaily.com.tw/realtimenews/section/new/'
@@ -172,6 +214,7 @@ def callback():
     except InvalidSignatureError:
         print('InvalidSignatureError')
         abort(400)
+
     return 'OK'
   
 #訊息傳遞區塊
@@ -358,7 +401,9 @@ def handle_text_message(event):
                 )
 
     elif text == '新聞' or text.lower() == 'news':
-        executor.submit(cnaNews.get_taiwan_news,text,uid)
+        
+        future= executor.submit(cnaNews.get_taiwan_news,text,uid)
+        future.add_done_callback(wait_to_push_message)
 
         rich_message = StickerSendMessage(
                 package_id=11539,
@@ -366,7 +411,9 @@ def handle_text_message(event):
             )
 
     elif u'天氣' in text:
-        executor.submit(cwbWeather.get_taiwan_weather,text,uid)
+        
+        future = executor.submit(cwbWeather.get_taiwan_weather,text,uid)
+        future.add_done_callback(wait_to_push_message)
 
         rich_message = StickerSendMessage(
                 package_id=11539,
@@ -375,7 +422,8 @@ def handle_text_message(event):
 
     elif text[0] == u'找':
 
-        executor.submit(momoShopping.get_keyword_search,text[1:],uid)
+        future = executor.submit(momoShopping.get_keyword_search,text[1:],uid)
+        future.add_done_callback(wait_to_push_message)
 
         rich_message = StickerSendMessage(
                 package_id=11537,
@@ -387,7 +435,9 @@ def handle_text_message(event):
         if len(text.split(' ')) > 1:
             category = text.split(' ')[1];
         #end if
-        executor.submit(momoShopping.get_momo_top30,category,uid)
+        
+        futur = executor.submit(momoShopping.get_momo_top30,category,uid)
+        future.add_done_callback(wait_to_push_message)
 
         rich_message = StickerSendMessage(
                 package_id=11537,
@@ -408,6 +458,16 @@ def handle_text_message(event):
     else:
         line_bot_api.reply_message(event.reply_token,rich_message)
         rich_message = None
+
+    ## need background thread.
+    # for res in as_completed(futures):
+    #     print(res.result())
+    #     result = res.result()
+    #     line_message = assemble(result)
+    #     if isinstance(line_message, TextSendMessage):
+    #         print(type(line_message))
+    #         line_bot_api.push_message(adm_uid, line_message)
+        
 
 @handler.add(MessageEvent, message=StickerMessage)
 def handle_sticker_message(event):

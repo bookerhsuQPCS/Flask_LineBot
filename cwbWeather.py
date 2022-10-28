@@ -34,6 +34,18 @@ TAIWAN_CITY = {'宜蘭縣':'F-D0047-001',
     '連江縣':'F-D0047-081',
     '金門縣':'F-D0047-085'}
 
+cwb_headers = {
+       'accept-encoding': 'gzip, deflate, br', 
+       'accept-language': 'zh-TW,zh;q=0.9,en-US;q=0.8,en;q=0.7', 
+       'Cache-Control': 'no-cache',
+       'pragma': 'no-cache',
+       'Upgrade-Insecure-Requests': '1',
+       'user-agent': 'Mozilla/5.0 (Windows NT 6.1; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/68.0.3440.106 Safari/537.36',
+       'content-type': 'application/x-www-form-urlencoded',
+       'accept': 'text/html,application/xhtml+xml,application/xml;q=0.9,image/webp,image/apng,*/*;q=0.8,application/signed-exchange;v=b3;q=0.9',
+       'cookie':''
+    }
+
 def get_taiwan_weather(keyword,uid):
     """
     Get current weather in specific city.
@@ -97,7 +109,7 @@ def get_taiwan_weather(keyword,uid):
     url = 'https://opendata.cwb.gov.tw/api/v1/rest/datastore/{}?Authorization={}' \
         '&locationName={}&sort=time&timeFrom={}&timeTo={}'.format(apiNm, CWB_AUTHED_KEY, ','.join(city), timeFrom, timeTo)
     
-    resp = requests.get(url, headers=headers, verify=False)
+    resp = requests.get(url, headers=cwb_headers, verify=False)
     if resp.status_code != 200:
         print('Invalid url:', resp.status_code)
         return "Invalid url: {}".format(resp.status_code)
@@ -135,6 +147,6 @@ def get_taiwan_weather(keyword,uid):
         msg.append(u'%s目前的天氣為%s。\n溫度為 %s 至 %s ℃，降雨機率為 %s %%。\n %s' % (loc['locationName'], wWx, wMinT, wMaxT, wPop, wCT))
     #end loop
     
-    return "\n".join(msg)
+    return {'uid': uid, 'type':'text', 'content':"\n".join(msg)}
 
 

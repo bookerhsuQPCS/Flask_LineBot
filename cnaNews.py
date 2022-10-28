@@ -11,7 +11,7 @@ import feedparser
 
 def get_taiwan_news(uid):
     """
-    建立一個抓最新消息的function
+    建立十個抓最新新聞消息
     """
 
     message = None
@@ -27,4 +27,4 @@ def get_taiwan_news(uid):
         message = "\n".join(news)
     #end if
     
-    return message
+    return {'uid': uid, 'type':'text', 'content':message}

@@ -60,18 +60,18 @@ def get_keyword_search(keyword,uid):
     except requests.exceptions.Timeout as tim:
         # Maybe set up for a retry, or continue in a retry loop
         print(tim)
-        return
+        return None
     except requests.exceptions.TooManyRedirects as man:
         # Tell the user their URL was bad and try a different one
         print(man)
-        return
+        return None
     except requests.exceptions.RequestException as e:
         # catastrophic error. bail.
         print(e)
-        return
+        return None
     except requests.exceptions.HTTPError as err:
         print(err)
-        return
+        return None
  
     soup = BeautifulSoup(resp.text,"lxml")
     _carouse_columns = []
@@ -91,30 +91,28 @@ def get_keyword_search(keyword,uid):
             img_url = 'https:{}'.format(img['src']) if 'http' not in img['src'] else img['src']
             img_url = img_url.replace('.webp','.jpg')
     
-        #     _carouse_columns.append(CarouselColumn(
-        #             thumbnail_image_url=img_url,
-        #             text=_title,
-        #             actions=[
-        #                 URITemplateAction(
-        #                     label='去逛逛',
-        #                     uri=('https://m.momoshop.com.tw'+_a['href']) if 'http' not in _a['href'] else _a['href']
-        #                 )
-        #             ]
-        #         )
-        #     )
-    
+            _carouse_columns.append({
+                    'thumbnail_image_url':img_url,
+                    'text':_title,
+                    'actions':[
+                            {
+                            'label':'去逛逛',
+                            'uri':('https://m.momoshop.com.tw'+_a['href']) if 'http' not in _a['href'] else _a['href']
+                            }
+                        ]
+                    })
         #end for
     
-        # message = TemplateSendMessage(
-        #     alt_text='Carousel template',
-        #     template=CarouselTemplate(
-        #         columns=_carouse_columns
-        #     )
-        # )
+        message = {
+            'alt_text':'',
+            'carouse_columns':_carouse_columns
+        }
     
     #end if
     
     print('get_keyword_search:end')
+    
+    return {'uid': uid, 'type':'template', 'content':message}
 
 def get_momo_top30(category,uid):
     print('category:'+category)
@@ -127,18 +125,18 @@ def get_momo_top30(category,uid):
     except requests.exceptions.Timeout as tim:
         # Maybe set up for a retry, or continue in a retry loop
         print(tim)
-        return
+        return None
     except requests.exceptions.TooManyRedirects as man:
         # Tell the user their URL was bad and try a different one
         print(man)
-        return
+        return None
     except requests.exceptions.RequestException as e:
         # catastrophic error. bail.
         print(e)
-        return
+        return None
     except requests.exceptions.HTTPError as err:
         print(err)
-        return
+        return None
  
     soup = BeautifulSoup(resp.text,"lxml")
     _cn = category
@@ -162,30 +160,26 @@ def get_momo_top30(category,uid):
                 img_url = img['data-original'] if 'http' in img['data-original'] else 'https://m.momoshop.com.tw{}'.format(img['data-original'])
                 img_url = img_url.replace('.webp','.jpg')
                 
-        #         _column = CarouselColumn(
-        #             thumbnail_image_url=img_url,
-        #             text=_alt,
-        #             actions=[
-        #                 URITemplateAction(
-        #                     label='去看看',
-        #                     uri=pd['href'] if 'http' in pd['href'] else 'https://m.momoshop.com.tw{}'.format(pd['href'])
-        #                 )
-        #             ]
-        #         )
-        #         _carouse_columns.append(_column)
-        #     #end if
+                _carouse_columns.append({
+                    'thumbnail_image_url':img_url,
+                    'text':_alt,
+                    'actions':[
+                            {
+                            'label':'去看看',
+                            'uri':pd['href'] if 'http' in pd['href'] else 'https://m.momoshop.com.tw{}'.format(pd['href'])
+                            }
+                        ]
+                })
+            #end if
         # end loop
        
-        # msg = TemplateSendMessage(
-        #     alt_text='{} TOP30'.format(_cn),
-        #     imageAspectRatio='square',
-        #     imageSize='contain',
-        #     template=CarouselTemplate(
-        #         columns=_carouse_columns
-        #     )
-        # )
-
+        msg = {
+             'alt_text':'{} TOP30'.format(_cn),
+             'carouse_columns':_carouse_columns
+        }
     #end if
     
     print('get_momo_top30: end')
+    
+    return {'uid': uid, 'type':'template', 'content':msg}
 
