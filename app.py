@@ -225,8 +225,7 @@ def handle_text_message(event):
     display_name = profile.display_name
     uid = profile.user_id
     text = event.message.text
-    text_message = None
-    rich_message = None
+    push_message = None
 
     print('uid: {}'.format(uid))
     print('name:{}'.format(display_name))
@@ -255,35 +254,33 @@ def handle_text_message(event):
 
         print('package_id: '+str(package_id))
         print('sticker_id:'+str(sticker_id))
-        rich_message = StickerSendMessage(
+        push_message = StickerSendMessage(
             package_id=package_id,
             sticker_id=sticker_id
         )
 
     elif text == "蘋果即時新聞":
-        text_message = apple_news()
+        push_message = TextSendMessage(text=apple_news())
     elif text == "近期熱門廢文":  
-        text_message = ptt_hot()  
+        push_message = TextSendMessage(text=ptt_hot())
     elif text == "近期上映":  
-        text_message = movie.atmovies()
+        push_message = TextSendMessage(text=movie.atmovies())
     elif text == "新片":  
-        text_message = movie.truemovie() 
+        push_message = TextSendMessage(text=movie.truemovie())
     elif text == "今日即期匯率":  
-        text_message = currency()
+        push_message = TextSendMessage(text=currency())
     elif text == "吃什麼":  
-        text_message = maps.randombysearch()
+        push_message = TextSendMessage(text=maps.randombysearch())
     elif( len(text) == 4 and text.isdigit() ):
-        text_message = 'https://goodinfo.tw/StockInfo/StockDividendSchedule.asp?STOCK_ID='+ event.message.text
-    elif( len(text) == 2 and text.isdigit() ):
-        text_message = ''
+        push_message = TextSendMessage(text='https://goodinfo.tw/StockInfo/StockDividendSchedule.asp?STOCK_ID='+ event.message.text)
     elif text == "USD":  
-        text_message = currencylayer()
+        push_message = TextSendMessage(text=currencylayer())
     elif text == "空氣":  
-        text_message = pm25()
+        push_message = TextSendMessage(text=pm25())
     elif text == "書": 
-        text_message = book.books() + book.kobo() + book.taaze()    
+        push_message = TextSendMessage(text=(book.books() + book.kobo() + book.taaze()))
     elif text == "正妹": 
-        text_message = beauty.ptt_beauty()      
+        push_message = TextSendMessage(text=beauty.ptt_beauty())
     # elif text == "larp": 
     #     text_msg = larp() 
 
@@ -295,14 +292,14 @@ def handle_text_message(event):
        
        img_url = girl_img_urls[random.randint(0, len(girl_img_urls)-1)]
         
-       rich_message = ImageSendMessage(
+       push_message = ImageSendMessage(
            original_content_url=img_url,
            preview_image_url=img_url
        )
        
     elif u'肥' in text:
        
-       rich_message = ImagemapSendMessage(
+       push_message = ImagemapSendMessage(
            base_url='https://i.imgur.com/wpM584d.jpg',
            alt_text='this is an imagemap',
            base_size=BaseSize(height=1040, width=1040),
@@ -337,60 +334,24 @@ def handle_text_message(event):
     elif text == '試試' or text.lower() == 'help':
 
         ###### 選單介面
-        rich_message = TemplateSendMessage(
-                    alt_text='貓喵寶寶',
+        push_message = TemplateSendMessage(
+                    alt_text='貓喵寶寶便利貼',
                     template=ButtonsTemplate(
                         thumbnail_image_url='https://image.cache.storm.mg/styles/smg-800xauto-er/s3/media/image/2020/06/23/20200623-072521_U7111_M620467_21f2.jpg?itok=KocIzJI0',
                         title='選單',
-                        text='熱騰騰',
+                        text='熱騰騰的',
                         actions=[
                             MessageTemplateAction(
-                                label='最新新聞',
-                                text='news'
-                            ),
-                            MessageTemplateAction(
-                                label='雙北天氣',
-                                text='雙北天氣'
-                            ),
-                            MessageTemplateAction(
-                                label='離島天氣',
-                                text='離島天氣'
-                            ),
-                            MessageTemplateAction(
-                                label='銷售排行',
-                                text='top30'
+                                label='雙北/離島天氣',
+                                text='雙北離島天氣'
                             ),
 							MessageTemplateAction(
                                 label='PTT 熱門廢文',
                                 text='近期熱門廢文'
                             ),
 							MessageTemplateAction(
-                                label='近期上映',
-                                text='近期上映'
-                            ),
-							MessageTemplateAction(
-                                label='新片評比',
-                                text='新片'
-                            ),
-							MessageTemplateAction(
-                                label='即期匯率',
-                                text='今日即期匯率'
-                            ),
-							MessageTemplateAction(
                                 label='想吃什麼',
                                 text='吃什麼'
-                            ),
-							MessageTemplateAction(
-                                label='美元匯率',
-                                text='USD'
-                            ),
-							MessageTemplateAction(
-                                label='空氣品質',
-                                text='空氣'
-                            ),
-							MessageTemplateAction(
-                                label='暢銷書',
-                                text='書'
                             ),
 							MessageTemplateAction(
                                 label='當紅正妹',
@@ -405,7 +366,7 @@ def handle_text_message(event):
         future= executor.submit(cnaNews.get_taiwan_news,text,uid)
         future.add_done_callback(wait_to_push_message)
 
-        rich_message = StickerSendMessage(
+        push_message = StickerSendMessage(
                 package_id=11539,
                 sticker_id=52114133
             )
@@ -415,7 +376,7 @@ def handle_text_message(event):
         future = executor.submit(cwbWeather.get_taiwan_weather,text,uid)
         future.add_done_callback(wait_to_push_message)
 
-        rich_message = StickerSendMessage(
+        push_message = StickerSendMessage(
                 package_id=11539,
                 sticker_id=52114113
             )
@@ -425,7 +386,7 @@ def handle_text_message(event):
         future = executor.submit(momoShopping.get_keyword_search,text[1:],uid)
         future.add_done_callback(wait_to_push_message)
 
-        rich_message = StickerSendMessage(
+        push_message = StickerSendMessage(
                 package_id=11537,
                 sticker_id=52002770
             )
@@ -439,34 +400,22 @@ def handle_text_message(event):
         futur = executor.submit(momoShopping.get_momo_top30,category,uid)
         future.add_done_callback(wait_to_push_message)
 
-        rich_message = StickerSendMessage(
+        push_message = StickerSendMessage(
                 package_id=11537,
                 sticker_id=52002748
             )
         
     else:
         ### 圖片
-        rich_message = StickerSendMessage(
+        push_message = StickerSendMessage(
             package_id=6632,
             sticker_id=11825376
         )
     #end if
         
-    if text_message is not None and len(text_message) > 0:
-        line_bot_api.reply_message(event.reply_token,TextSendMessage(text=text_message))
-        text_message = None
-    else:
-        line_bot_api.reply_message(event.reply_token,rich_message)
-        rich_message = None
-
-    ## need background thread.
-    # for res in as_completed(futures):
-    #     print(res.result())
-    #     result = res.result()
-    #     line_message = assemble(result)
-    #     if isinstance(line_message, TextSendMessage):
-    #         print(type(line_message))
-    #         line_bot_api.push_message(adm_uid, line_message)
+    if push_message is not None:
+        line_bot_api.reply_message(event.reply_token,push_message)
+        push_message = None
         
 
 @handler.add(MessageEvent, message=StickerMessage)

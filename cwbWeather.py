@@ -81,6 +81,8 @@ def get_taiwan_weather(keyword,uid):
             city = [u'臺北市',u'新北市']
         elif keyword == u'離島':
             city = [u'澎湖縣',u'金門縣',u'連江縣']
+        elif keyword == u'雙北離島':
+            city = [u'臺北市',u'新北市',u'澎湖縣',u'金門縣',u'連江縣']
         elif keyword == u'東部':
             city = [u'宜蘭縣',u'花蓮縣',u'臺東縣']
         else:
