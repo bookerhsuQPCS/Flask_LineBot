@@ -6,7 +6,7 @@ Created on Sat Nov 18 21:00:17 21
 @author: bookerhsu
 """
 
-import requests, re
+import requests, re, random
 import requests.packages.urllib3
 from bs4 import BeautifulSoup
 
@@ -114,7 +114,11 @@ def get_keyword_search(keyword,uid):
     
     return {'uid': uid, 'type':'template', 'content':message}
 
-def get_momo_top30(category,uid):
+def get_momo_top30(uid):
+    category = category_set[random.randint(0, len(category_set)-1)]
+    if len(text.split(' ')) > 1:
+        category = text.split(' ')[1];
+    #end if
     print('category:'+category)
     target_url = 'https://m.momoshop.com.tw/category.momo?cn={}&top30New=y'.format(category)
     

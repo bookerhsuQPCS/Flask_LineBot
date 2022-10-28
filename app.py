@@ -350,8 +350,8 @@ def handle_text_message(event):
                                 text='近期熱門廢文'
                             ),
 							MessageTemplateAction(
-                                label='想吃什麼',
-                                text='吃什麼'
+                                label='熱銷書籍',
+                                text='書'
                             ),
 							MessageTemplateAction(
                                 label='當紅正妹',
@@ -392,12 +392,8 @@ def handle_text_message(event):
             )
           
     elif text.lower() == 'top30':
-        category = category_set[random.randint(0, len(category_set)-1)]
-        if len(text.split(' ')) > 1:
-            category = text.split(' ')[1];
-        #end if
         
-        futur = executor.submit(momoShopping.get_momo_top30,category,uid)
+        futur = executor.submit(momoShopping.get_momo_top30,uid)
         future.add_done_callback(wait_to_push_message)
 
         push_message = StickerSendMessage(

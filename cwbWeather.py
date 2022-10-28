@@ -8,6 +8,7 @@ Created on Wed Oct 26 21:04:43 2022
 @author: 徐子陵
 """
 import requests, json, datetime
+import requests.packages.urllib3
 
 CWB_AUTHED_KEY = 'CWB-52F7E175-5DC9-4E41-9D16-6ED798D0C27E'
 
