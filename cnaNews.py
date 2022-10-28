@@ -11,7 +11,7 @@ import feedparser
 
 def get_taiwan_news(uid):
     """
-    建立十個抓最新新聞消息
+    建立六個抓最新新聞消息
     """
 
     message = None
@@ -19,7 +19,7 @@ def get_taiwan_news(uid):
     # 抓取資料
     news = []
     rss = feedparser.parse(rss_url)
-    for i, entry in enumerate(rss.entries[:10], start=0):
+    for i, entry in enumerate(rss.entries[:6], start=0):
         news.append(entry['title'] + ' ' + entry['link'])
     #end if
     
@@ -27,4 +27,4 @@ def get_taiwan_news(uid):
         message = "\n".join(news)
     #end if
     
-    return {'uid': uid, 'type':'text', 'content':message}
+    return dict({'uid': uid, 'type':'text', 'content':message})

@@ -271,7 +271,7 @@ def handle_text_message(event):
         push_message = TextSendMessage(text=currency())
     elif text == "吃什麼":  
         push_message = TextSendMessage(text=maps.randombysearch())
-    elif( len(text) == 4 and text.isdigit() ):
+    elif( len(text) == 4 and text.isdigit()):
         push_message = TextSendMessage(text='https://goodinfo.tw/StockInfo/StockDividendSchedule.asp?STOCK_ID='+ event.message.text)
     elif text == "USD":  
         push_message = TextSendMessage(text=currencylayer())
@@ -284,7 +284,7 @@ def handle_text_message(event):
     # elif text == "larp": 
     #     text_msg = larp() 
 
-    elif u'美女' in text or u'酒店' in text or u'辣妹' in text:
+    elif u'街女' in text or u'小姐' in text or u'辣妹' in text:
        
        global girl_img_urls
        if len(girl_img_urls) == 0:
@@ -363,7 +363,7 @@ def handle_text_message(event):
 
     elif text == '新聞' or text.lower() == 'news':
         
-        future= executor.submit(cnaNews.get_taiwan_news,text,uid)
+        future= executor.submit(cnaNews.get_taiwan_news,uid)
         future.add_done_callback(wait_to_push_message)
 
         push_message = StickerSendMessage(
@@ -381,7 +381,7 @@ def handle_text_message(event):
                 sticker_id=52114113
             )
 
-    elif text[0] == u'找':
+    elif text[0] == u'找' or text[0] == u'買':
 
         future = executor.submit(momoShopping.get_keyword_search,text[1:],uid)
         future.add_done_callback(wait_to_push_message)

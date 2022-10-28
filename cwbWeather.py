@@ -47,7 +47,7 @@ cwb_headers = {
        'cookie':''
     }
 
-def get_taiwan_weather(keyword,uid):
+def get_taiwan_weather(location,uid):
     """
     Get current weather in specific city.
 
@@ -60,7 +60,7 @@ def get_taiwan_weather(keyword,uid):
     '''https://opendata.cwb.gov.tw/api/v1/rest/datastore/F-C0032-001?Authorization=CWB-52F7E175-5DC9-4E41-9D16-6ED798D0C27E
         &locationName=%E5%AE%9C%E8%98%AD%E7%B8%A3,%E8%8A%B1%E8%93%AE%E7%B8%A3&sort=time&timeFrom=2021-11-14T06%3A00%3A00&timeTo=2021-11-14T08%3A00%3A00
     '''
-    print('keyword:'+keyword) 
+    print('location:'+location) 
     
     apiNm = 'F-C0032-001'
     now = datetime.datetime.now()
@@ -69,34 +69,33 @@ def get_taiwan_weather(keyword,uid):
     city = []
     msg = []
 
-    if keyword[0] == u'台':
-        keyword = u'臺' + keyword[1:];
+    if location[0] == u'台':
+        location = u'臺' + location[1:];
     
-    if keyword[-2:] == u'天氣':
-        keyword = keyword[:-2]
+    if location[-2:] == u'天氣':
+        location = location[:-2]
     
-    if keyword[-1] == u'縣' or keyword[-1] == u'市':
-        city = [keyword]
+    if location[-1] == u'縣' or location[-1] == u'市':
+        city = [location]
     else:
-        if keyword == u'雙北':
+        if location == u'雙北':
             city = [u'臺北市',u'新北市']
-        elif keyword == u'離島':
+        elif location == u'離島':
             city = [u'澎湖縣',u'金門縣',u'連江縣']
-        elif keyword == u'雙北離島':
+        elif location == u'雙北離島':
             city = [u'臺北市',u'新北市',u'澎湖縣',u'金門縣',u'連江縣']
-        elif keyword == u'東部':
+        elif location == u'東部':
             city = [u'宜蘭縣',u'花蓮縣',u'臺東縣']
         else:
             for name in TAIWAN_CITY.keys():
-                if name[:-1] == keyword:
+                if name[:-1] == location:
                     city.append(name)
                 #end if
             #end loop
     #end if
     
     if len(city) == 0:
-        return u'目前的 {} 無任何資料。'.format(keyword)
-    
+        return u'目前的 {} 無任何資料。'.format(location)
     if now.hour > 4:
         timeFrom = '{}T06:00:00'.format(now.strftime("%Y-%m-%d"))
         timeTo = '{}T18:00:00'.format(now.strftime("%Y-%m-%d"))
@@ -151,6 +150,6 @@ def get_taiwan_weather(keyword,uid):
         msg.append(u'%s目前的天氣為%s。\n溫度為 %s 至 %s ℃，降雨機率為 %s %%。\n %s' % (loc['locationName'], wWx, wMinT, wMaxT, wPop, wCT))
     #end loop
     
-    return {'uid': uid, 'type':'text', 'content':"\n".join(msg)}
+    return dict({'uid': uid, 'type':'text', 'content':"\n".join(msg)})
 
 
