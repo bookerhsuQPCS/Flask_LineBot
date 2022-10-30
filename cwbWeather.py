@@ -7,10 +7,10 @@ Created on Wed Oct 26 21:04:43 2022
 
 @author: 徐子陵
 """
-import requests, json, datetime
+import requests, json, datetime, os
 import requests.packages.urllib3
 
-CWB_AUTHED_KEY = 'CWB-52F7E175-5DC9-4E41-9D16-6ED798D0C27E'
+CWB_AUTHED_KEY = os.environ['CWB_AUTHED_KEY']
 
 TAIWAN_CITY = {'宜蘭縣':'F-D0047-001',
     '桃園市':'F-D0047-005',
@@ -82,8 +82,6 @@ def get_taiwan_weather(area,uid):
             city = [u'臺北市',u'新北市']
         elif area == u'離島':
             city = [u'澎湖縣',u'金門縣',u'連江縣']
-        elif area == u'雙北離島':
-            city = [u'臺北市',u'新北市',u'澎湖縣',u'金門縣',u'連江縣']
         elif area == u'東部':
             city = [u'宜蘭縣',u'花蓮縣',u'臺東縣']
         else:
@@ -152,4 +150,5 @@ def get_taiwan_weather(area,uid):
     
     return dict({'uid': uid, 'type':'text', 'content':"\n".join(msg)})
 
-
+if __name__ == '__main__':
+    get_taiwan_weather(u'台北市天氣','123456')

@@ -66,8 +66,6 @@ category_set = []
 
 executor = ThreadPoolExecutor(10)
 
-# requests.packages.urllib3.disable_warnings()
-
 def wait_to_push_message(future):
     
     try:
@@ -112,23 +110,6 @@ def assemble(messaget):
     else: 
         raise Exception("Data provided can't be in the past")
 
-
-def apple_news():
-    target_url = 'http://www.appledaily.com.tw/realtimenews/section/new/'
-    rs = requests.session()
-    res = rs.get(target_url, verify=False)
-    soup = BeautifulSoup(res.text, 'html.parser')
-    content = ""
-    for index, data in enumerate(soup.select('.rtddt a'), 0):
-        if index == 3:
-            return content
-
-        link = data['href']
-        notnews = link.find('entertainment')
-        if notnews == -1:
-            content += '{}\n\n'.format(link)
-    return content
-
 def ptt_hot():
     target_url = 'http://disp.cc/b/PttHot'
     rs = requests.session()
@@ -143,45 +124,6 @@ def ptt_hot():
         if data.find('a')['href'] == "796-59l9": #[公告]
             break
         content += '{}\n{}\n\n'.format(title, link)
-    return content
-
-def currencylayer():
-    target_url = 'http://apilayer.net/api/live?access_key='+config['currencylayer']['access_key']+'&currencies=TWD,JPY,CNY'
-    response = requests.get(target_url)
-    data = response.text
-    parsed = json.loads(data)
-    rates = parsed['quotes']
-    content = ""
-    for currency, rate in rates.items():
-        content += currency+"="+str(rate)+"\n"
-    return content[:-1]
-
-def currency():
-    target_url = 'http://rate.bot.com.tw/Pages/Static/UIP003.zh-TW.htm'
-    rs = requests.session()
-    res = rs.get(target_url, verify=False)
-    res.encoding = 'utf-8'
-    soup = BeautifulSoup(res.text, 'html.parser')
-    content = ""
-    for index, data in enumerate(soup.select('.rate-content-sight.text-right.print_hide')):
-        if index == 1: 
-            content += '美金(USD)'+data.text+"\n"
-            print('美金(USD)' , data.text)
-        elif index == 15:
-            content += '日圓(JPY)'+data.text+"\n"
-            print('日圓(JPY)' , data.text)
-        elif index == 37:
-            content += '人民幣(CNY)'+data.text
-            print('人民幣(CNY)' , data.text)
-
-    return content
-
-def pm25():
-    target_url = 'http://opendata2.epa.gov.tw/AQX.json'
-    response = requests.get(target_url)
-    data = response.text
-    results = json.loads(data)
-    content = results[3]['SiteName'] + ' PM2.5: '+ results[3]['PM2.5'] + ',狀態: ' + results[3]['Status']
     return content
 
 def send_profile_to(profi):
@@ -259,31 +201,12 @@ def handle_text_message(event):
             sticker_id=sticker_id
         )
 
-    elif text == "蘋果即時新聞":
-        push_message = TextSendMessage(text=apple_news())
     elif text == "近期熱門廢文":  
         push_message = TextSendMessage(text=ptt_hot())
-    elif text == "近期上映":  
-        push_message = TextSendMessage(text=movie.atmovies())
     elif text == "新片":  
         push_message = TextSendMessage(text=movie.truemovie())
-    elif text == "今日即期匯率":  
-        push_message = TextSendMessage(text=currency())
-    elif text == "吃什麼":  
-        push_message = TextSendMessage(text=maps.randombysearch())
-    elif( len(text) == 4 and text.isdigit()):
-        push_message = TextSendMessage(text='https://goodinfo.tw/StockInfo/StockDividendSchedule.asp?STOCK_ID='+ event.message.text)
-    elif text == "USD":  
-        push_message = TextSendMessage(text=currencylayer())
-    elif text == "空氣":  
-        push_message = TextSendMessage(text=pm25())
-    elif text == "書": 
-        push_message = TextSendMessage(text=(book.books() + book.kobo() + book.taaze()))
     elif text == "正妹": 
         push_message = TextSendMessage(text=beauty.ptt_beauty())
-    # elif text == "larp": 
-    #     text_msg = larp() 
-
     elif u'街女' in text or u'小姐' in text or u'辣妹' in text:
        
        global girl_img_urls
