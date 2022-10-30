@@ -92,19 +92,17 @@ def get_taiwan_weather(area,uid):
             #end loop
     #end if
     
-    if len(city) == 0:
-        return u'目前的{}無任何天氣資料。'.format(area)
     if now.hour > 4:
-        timeFrom = '{}T06:00:00'.format(now.strftime("%Y-%m-%d"))
-        timeTo = '{}T18:00:00'.format(now.strftime("%Y-%m-%d"))
+        timeFrom = '{}T06:01:01'.format(now.strftime("%Y-%m-%d"))
+        timeTo = '{}T18:01:01'.format(now.strftime("%Y-%m-%d"))
     elif now.hour > 22 or now.hour < 5:
         now += datetime.timedelta(days=1)
-        timeFrom = '{}T06:00:00'.format(now.strftime("%Y-%m-%d"))
-        timeTo = '{}T18:00:00'.format(now.strftime("%Y-%m-%d"))
+        timeFrom = '{}T06:01:01'.format(now.strftime("%Y-%m-%d"))
+        timeTo = '{}T18:01:01'.format(now.strftime("%Y-%m-%d"))
     else:
-        timeTo = '{}T06:00:00'.format(now.strftime("%Y-%m-%d"))
+        timeTo = '{}T06:01:01'.format(now.strftime("%Y-%m-%d"))
         now -= datetime.timedelta(days=1)
-        timeFrom = '{}T18:00:00'.format(now.strftime("%Y-%m-%d"))
+        timeFrom = '{}T18:01:01'.format(now.strftime("%Y-%m-%d"))
 
     url = 'https://opendata.cwb.gov.tw/api/v1/rest/datastore/{}?Authorization={}' \
         '&locationName={}&sort=time&timeFrom={}&timeTo={}'.format(apiNm, CWB_AUTHED_KEY, ','.join(city), timeFrom, timeTo)
