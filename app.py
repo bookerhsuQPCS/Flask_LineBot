@@ -70,7 +70,6 @@ def wait_to_push_message(future):
     
     try:
         result = future.result()
-        print(result)
         
         if result is None:
             return
@@ -84,13 +83,13 @@ def wait_to_push_message(future):
 
 
 def assemble(messaget):
-
+    print(messaget)
     if messaget['type'] == 'text':
         return TextSendMessage(text=messaget['content'])
 
     elif messaget['type'] == 'template':
         _carouse_columns = []
-
+        print(isinstance(messaget['content']['carouse_columns'],list))
         if isinstance(messaget['content']['carouse_columns'],list):
             for _carouse in messaget['content']['carouse_columns']:
                 _carouse_columns.append(CarouselColumn(
