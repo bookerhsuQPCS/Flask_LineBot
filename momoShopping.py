@@ -147,8 +147,6 @@ def get_momo_top30(uid):
         _cn = pathArea.find("a", attrs={"cn": category}).text
     #end if
 
-    print('12345678')
-
     productInfo = soup.find_all("a", class_="productInfo")
     if productInfo is not None and len(productInfo) > 0:
         for pd in productInfo[:10]:
@@ -186,3 +184,5 @@ def get_momo_top30(uid):
     
     return dict({'uid': uid, 'type':'template', 'content':msg})
 
+if __name__ == '__main__':
+    get_momo_top30('123456')

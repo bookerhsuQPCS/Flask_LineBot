@@ -83,13 +83,13 @@ def wait_to_push_message(future):
 
 
 def assemble(messaget):
-    print(messaget)
+
     if messaget['type'] == 'text':
         return TextSendMessage(text=messaget['content'])
 
     elif messaget['type'] == 'template':
         _carouse_columns = []
-        print(isinstance(messaget['content']['carouse_columns'],list))
+
         if isinstance(messaget['content']['carouse_columns'],list):
             for _carouse in messaget['content']['carouse_columns']:
                 _carouse_columns.append(CarouselColumn(
@@ -105,6 +105,8 @@ def assemble(messaget):
                     columns=_carouse_columns
                 )
             )
+        
+        TextSendMessage(text='Data loss.')
 
     else: 
         raise Exception("Data provided can't be in the past")
