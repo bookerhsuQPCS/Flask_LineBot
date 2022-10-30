@@ -6,7 +6,7 @@ Created on Sat Nov 18 21:00:17 21
 @author: bookerhsu
 """
 
-import requests, configparser, random, os, datetime, json
+import requests, configparser, random, os, datetime
 import requests.packages.urllib3
 from flask import Flask, request, abort
 from concurrent.futures import ThreadPoolExecutor
@@ -38,7 +38,7 @@ from linebot.models import (
     SeparatorComponent, QuickReply, QuickReplyButton
 )
 
-import maps, movie, book, beauty, momoShopping, cnaNews, cwbWeather, jpStreetGirls
+import movie, book, beauty, momoShopping, cnaNews, cwbWeather, jpStreetGirls
 
 ## beginning..
 
