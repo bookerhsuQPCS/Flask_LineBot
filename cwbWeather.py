@@ -131,6 +131,9 @@ def get_taiwan_weather(area,uid):
         for wElm in weatherElement:
             eN = wElm['elementName']
             wtime = wElm['time']
+            if len(wtime) == 0:
+                continue
+
             if eN == 'Wx':
                 wWx = wtime[0]['parameter']['parameterName']
             elif eN == 'PoP':
