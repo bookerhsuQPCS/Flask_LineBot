@@ -81,7 +81,6 @@ def wait_to_push_message(future):
     except Exception as e:
         print(e)
 
-
 def assemble(messaget):
 
     if messaget['type'] == 'text':
@@ -90,24 +89,33 @@ def assemble(messaget):
     elif messaget['type'] == 'template':
         _carouse_columns = []
 
-        if isinstance(messaget['content']['carouse_columns'],list):
+        if isinstance(messaget['content']['carouse_columns'], list):
             for _carouse in messaget['content']['carouse_columns']:
+                _actions = []
+                if isinstance(_carouse['actions'], list):
+                    for action in _carouse['actions']:
+                        _actions.append(URITemplateAction(
+                            label=action['label'],
+                            uri=action['uri']
+                        ))
+                    #end for
+                #end if
+                    
                 _carouse_columns.append(CarouselColumn(
                         thumbnail_image_url=_carouse['thumbnail_image_url'],
                         text=_carouse['text'],
-                        actions=_carouse['actions']
+                        actions=_actions
                     )
                 )
-        
+            #end for
+
             return TemplateSendMessage(
                 alt_text=messaget['content']['alt_text'],
                 template=CarouselTemplate(
                     columns=_carouse_columns
                 )
             )
-        
-        TextSendMessage(text='Data loss.')
-
+        #end if
     else: 
         raise Exception("Data provided can't be in the past")
 
