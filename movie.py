@@ -1,3 +1,4 @@
+# -*- coding: utf-8 -*-
 import requests
 from bs4 import BeautifulSoup
 import datetime
@@ -8,7 +9,7 @@ def truemovie():
     res = rs.get(target_url, verify=False)
     res.encoding = 'Big5'
     soup = BeautifulSoup(res.text, 'html.parser')
-    content = ""
+    content = []
 
     today = datetime.datetime.now()
     tableid= int(today.month) +115
@@ -19,8 +20,9 @@ def truemovie():
         if(index%5 == week): 
            title = movie
            link = "http://www.truemovie.com/" + data['href']
-           content += '{}\n{}\n'.format(title, link)
-    return content
+           content.append('{}\n{}\n'.format(title, link))
+           
+    return ''.join(content)
     
 def atmovies():
     target_url = 'http://www.atmovies.com.tw/movie/next/0/'
@@ -28,11 +30,20 @@ def atmovies():
     res = rs.get(target_url, verify=False)
     res.encoding = 'utf-8'
     soup = BeautifulSoup(res.text, 'html.parser')
-    content = ""
-    for index, data in enumerate(soup.select('ul.filmNextListAll a')):
+    content = []
+    for index, _li in enumerate(soup.select('ul.filmListAll li')):
         if index == 5:
-            return content
-        title = data.text.replace('\t', '').replace('\r', '')
-        link = "http://www.atmovies.com.tw" + data['href']
-        content += '{}\n{}\n'.format(title, link)
-    return content
+            return '\n'.join(content)
+        
+        _a = _li.select_one('div.filmtitle a')
+        title = _a.text.replace('\t', '').replace('\r', '')
+        link = "http://www.atmovies.com.tw" + _a['href']
+        # img_url = _li.select_one('a img.filmListAllPoster')['src']
+        
+        content.append('' + title + ' ' + link)
+       
+        
+    return '\n'.join(content)
+
+if __name__ == '__main__':
+    print(atmovies())
